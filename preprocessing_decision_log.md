@@ -1897,4 +1897,91 @@ Risk / interpretation:
 
 Notebook update:
 
-`hospital_readmission_modeling.ipynb` now includes an extended experiment summary section that reads the saved CSV results and displays comparison tables with accuracy included. It also summarizes the neural-network and imbalance-handling searches from the saved CSV files without rerunning the full training loops
+`hospital_readmission_modeling.ipynb` now includes an extended experiment summary section that reads the saved CSV results and displays comparison tables with accuracy included. It also summarizes the neural-network and imbalance-handling searches from the saved CSV files without rerunning the full training loops.
+
+## Implementation Update: Plateau Diagnostic and Patient-History Features
+
+After the first all-encounter patient-safe model plateaued around PR-AUC 0.229, an additional loop tested feature groups, split effects, ensembling, and prior patient-history features.
+
+New scripts:
+
+```text
+plateau_diagnostic_search.py
+plateau_ensemble_search.py
+patient_history_feature_search.py
+patient_history_tuning_search.py
+```
+
+New outputs:
+
+```text
+experiment_results/plateau_diagnostic_results.csv
+experiment_results/plateau_diagnostic_lift_tables.csv
+experiment_results/plateau_dataset_signal_summary.csv
+experiment_results/plateau_ensemble_results.csv
+experiment_results/plateau_ensemble_lift_tables.csv
+experiment_results/plateau_ensemble_selected_by_validation.csv
+experiment_results/patient_history_feature_results.csv
+experiment_results/patient_history_feature_lift_tables.csv
+experiment_results/patient_history_tuning_results.csv
+experiment_results/patient_history_tuning_lift_tables.csv
+plateau_analysis_report.md
+```
+
+Practical feature findings:
+
+- Raw diagnosis codes hurt performance and should not replace grouped diagnosis features.
+- Administrative/discharge/source variables are among the strongest predictors.
+- Diagnosis features matter.
+- Medication and lab features add limited marginal signal.
+- Broad ensembling did not break the plateau.
+- Random row splits produce higher apparent PR-AUC than patient-safe splits, confirming that evaluation design strongly affects reported results.
+
+Additional accepted-for-exploration feature family:
+
+For the all-encounter framing only, create prior patient-history features using only earlier encounters for the same patient ordered by `encounter_id`. These include:
+
+```text
+patient_prior_encounters
+patient_prior_readmit30_count
+patient_prior_readmit_any_count
+patient_prior_readmit30_rate
+patient_prior_readmit_any_rate
+patient_has_prior_readmit30
+patient_has_prior_readmit_any
+previous encounter utilization summaries
+previous encounter readmission/admission/discharge/diagnosis/lab/medication categories
+```
+
+Important limitation:
+
+These prior-history features are not part of the original first-encounter modeling scope. They are valid only if the project is framed as predicting risk for all eligible encounters, where earlier encounters for the same patient are historical information available before the current prediction.
+
+Best observed patient-safe result after this loop:
+
+```text
+HistoryTuneCat_d6_lr0015_l210_sqrt
+Test PR-AUC 0.2389
+Test ROC-AUC 0.6838
+Test recall 0.3731
+Test precision 0.2400
+Test F1 0.2921
+Test accuracy 0.8006
+```
+
+Most defensible validation-selected history model:
+
+```text
+HistoryTuneCat_d6_lr0015_l210_cw025
+Validation PR-AUC 0.2851
+Test PR-AUC 0.2386
+Test ROC-AUC 0.6839
+Test recall 0.4281
+Test precision 0.2225
+Test F1 0.2928
+Test accuracy 0.7720
+```
+
+Final interpretation:
+
+The plateau appears mainly due to dataset limitations and target noise rather than lack of model complexity. The public UCI data contain useful administrative, diagnosis, utilization, and limited longitudinal signal, but they do not include richer clinical information such as vitals, continuous labs, medication doses, discharge plans, notes, social determinants, exact dates, or hospital/provider identifiers. With patient-safe evaluation, the practical ceiling appears to be around PR-AUC 0.24 for this feature set.

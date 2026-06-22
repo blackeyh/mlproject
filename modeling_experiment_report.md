@@ -754,3 +754,96 @@ Alternate all-encounter patient-group split best selected test F1: 0.2816
 ```
 
 The models are still not clinically strong in an absolute sense. Precision remains around 0.20 at useful thresholds, meaning many flagged patients are false positives. However, this is a clear course-project improvement: the model can rank and identify higher-risk patients much better than the baseline while maintaining a transparent validation/test workflow.
+
+## Plateau Diagnostic and Patient-History Follow-Up
+
+After discussing the plateau, a final follow-up loop tested whether the ceiling was caused by model choice, feature engineering, split design, or dataset limitations.
+
+New scripts:
+
+```text
+plateau_diagnostic_search.py
+plateau_ensemble_search.py
+patient_history_feature_search.py
+patient_history_tuning_search.py
+```
+
+New outputs:
+
+```text
+experiment_results/plateau_diagnostic_results.csv
+experiment_results/plateau_diagnostic_lift_tables.csv
+experiment_results/plateau_dataset_signal_summary.csv
+experiment_results/plateau_ensemble_results.csv
+experiment_results/plateau_ensemble_lift_tables.csv
+experiment_results/plateau_ensemble_selected_by_validation.csv
+experiment_results/patient_history_feature_results.csv
+experiment_results/patient_history_feature_lift_tables.csv
+experiment_results/patient_history_tuning_results.csv
+experiment_results/patient_history_tuning_lift_tables.csv
+plateau_analysis_report.md
+```
+
+Key diagnostic results:
+
+```text
+Base engineered features, no extra engineering: PR-AUC 0.2226
+Full engineered summary: PR-AUC 0.2281
+Full + categorical interactions: PR-AUC 0.2304
+Full + raw diagnosis codes: PR-AUC 0.1558
+Drop admin/discharge/source features: PR-AUC 0.1999
+Drop diagnosis features: PR-AUC 0.2149
+Drop medication features: PR-AUC 0.2272
+Drop lab features: PR-AUC 0.2283
+Admin/utilization-only: PR-AUC 0.2147
+Random-row split with same strong feature family: PR-AUC 0.2456
+```
+
+Interpretation:
+
+- Raw diagnosis codes hurt badly; grouped diagnosis information is better.
+- Admission/discharge/source variables are among the strongest feature groups.
+- Diagnosis features matter.
+- Medication and lab features add limited marginal signal.
+- Random row splits look better than patient-safe splits, which helps explain higher-looking results in some papers/notebooks.
+
+The largest real improvement came from adding prior-within-patient history features in the all-encounter setting. These features use only earlier encounters for the same patient, such as prior encounter count, prior 30-day readmission count/rate, prior any-readmission count/rate, previous encounter outcomes, and previous utilization summaries.
+
+Best observed patient-safe result after patient-history tuning:
+
+```text
+HistoryTuneCat_d6_lr0015_l210_sqrt
+Feature setup: engineered features + categorical interactions + prior patient-history features
+Test PR-AUC 0.2389
+Test ROC-AUC 0.6838
+Test recall 0.3731
+Test precision 0.2400
+Test F1 0.2921
+Test accuracy 0.8006
+```
+
+Most defensible validation-selected history model:
+
+```text
+HistoryTuneCat_d6_lr0015_l210_cw025
+Validation PR-AUC 0.2851
+Test PR-AUC 0.2386
+Test ROC-AUC 0.6839
+Test recall 0.4281
+Test precision 0.2225
+Test F1 0.2928
+Test accuracy 0.7720
+```
+
+Best observed risk-ranking lift:
+
+```text
+Top 1% highest-risk encounters: precision 51.0%, lift 4.63x
+Top 5% highest-risk encounters: precision 33.4%, lift 3.03x
+Top 10% highest-risk encounters: precision 28.2%, recall 25.6%, lift 2.56x
+Top 20% highest-risk encounters: precision 22.3%, recall 40.4%, lift 2.02x
+```
+
+Final plateau conclusion:
+
+The plateau is probably not mainly a model-complexity problem. CatBoost, XGBoost, LightGBM, Random Forests, neural networks, resampling, threshold tuning, feature engineering, and ensembling were all tested. Patient-safe PR-AUC clustered tightly until adding prior patient history, and even then the best result moved to about 0.239 rather than a fundamentally higher level. With the public UCI tabular features, a practical patient-safe ceiling appears to be around PR-AUC 0.24 unless richer clinical/temporal data are added.

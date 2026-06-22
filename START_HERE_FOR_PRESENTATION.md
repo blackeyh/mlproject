@@ -20,18 +20,18 @@ The model is not perfect at classifying every readmission, but it ranks patients
 
 ## Best Result To Use
 
-Best overall model:
+Best overall model after the plateau follow-up:
 
-All-encounter CatBoost with patient-safe train/validation/test split.
+All-encounter CatBoost with patient-safe train/validation/test split and prior patient-history features.
 
 Metrics:
 
-- PR-AUC: 0.2290
-- ROC-AUC: 0.6797
-- Recall: 0.3817
-- Precision: 0.2214
-- F1: 0.2802
-- Accuracy: 0.7838
+- PR-AUC: 0.2389
+- ROC-AUC: 0.6838
+- Recall: 0.3731
+- Precision: 0.2400
+- F1: 0.2921
+- Accuracy: 0.8006
 
 Baseline positive rate / majority PR-AUC baseline:
 
@@ -39,7 +39,7 @@ Baseline positive rate / majority PR-AUC baseline:
 
 Simple interpretation:
 
-The model more than doubles the PR-AUC baseline: 0.2290 vs 0.1103.
+The model more than doubles the PR-AUC baseline: 0.2389 vs 0.1103.
 
 ## Paper Comparison
 
@@ -64,7 +64,7 @@ Our local reproduction of the visible paper setup:
 
 Careful wording:
 
-Our model beats the locally reproduced paper setup on PR-AUC, ROC-AUC, precision, F1, and accuracy, but not recall at the selected threshold. The paper itself reports PR-AUC only for the 30-day target, not all these extra metrics.
+Our model beats the locally reproduced paper setup on PR-AUC, ROC-AUC, precision, F1, and accuracy, but not recall at the selected threshold. The paper itself reports PR-AUC only for the 30-day target, not all these extra metrics. Our best patient-safe result is also close to the paper's reported PR-AUC 0.242.
 
 ## Files To Use
 
@@ -83,6 +83,9 @@ Then use:
 
 - `modeling_experiment_report.md`  
   Full record of models tried and results.
+
+- `plateau_analysis_report.md`  
+  Best file for explaining why the result plateaued and what improved it.
 
 - `preprocessing_decision_log.md`  
   Why preprocessing choices were made.
@@ -126,4 +129,4 @@ Do not say we beat the paper on every threshold.
 
 ## Best One-Sentence Conclusion
 
-Our final CatBoost model achieved PR-AUC 0.2290 on the 30-day readmission task more than doubling the natural baseline of 0.1103 and outperforming our local reproduction of the closest paper setup, while using a patient-safe evaluation split.
+Our final CatBoost model with prior patient-history features achieved PR-AUC 0.2389 on the 30-day readmission task, more than doubling the natural baseline of 0.1103 and outperforming our local reproduction of the closest paper setup, while using a patient-safe evaluation split.
