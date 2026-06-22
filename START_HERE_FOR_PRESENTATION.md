@@ -126,4 +126,4 @@ Do not say we beat the paper on every threshold.
 
 ## Best One-Sentence Conclusion
 
-Our final CatBoost model achieved PR-AUC 0.2290 on the 30-day readmission task, more than doubling the natural baseline of 0.1103 and outperforming our local reproduction of the closest paper setup, while using a patient-safe evaluation split.
+Our final CatBoost model achieved PR-AUC 0.2290 on the 30-day readmission task more than doubling the natural baseline of 0.1103 and outperforming our local reproduction of the closest paper setup, while using a patient-safe evaluation split.

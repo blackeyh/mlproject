@@ -1796,7 +1796,7 @@ Confusion matrix: TN 11338, FP 1855, FN 1063, TP 572
 
 Alternate-scope interpretation:
 
-Using all encounters with patient-level splitting gave the strongest performance found so far. This suggests that later encounters carry useful signal that is removed by the conservative first-encounter-only design. The tradeoff is explainability and project framing: the first-encounter scope is cleaner and closer to the original study, while the all-encounter patient-group split is stronger for predictive performance.
+Using all encounters with patient-level splitting gave the strongest performance found so far. This suggests that later encounters carry useful signal that is removed by the conservative first-encounter-only design. The tradeoff is explainability and project framing: the first-encounter scope is cleaner and closer to the original study while the all-encounter patient-group split is stronger for predictive performance.
 
 Paper reproduction check:
 
@@ -1809,7 +1809,7 @@ Reference:
 Bhuvan et al., "Identifying Diabetic Patients with High Risk of Readmission", arXiv:1602.04257.
 ```
 
-The paper reported PR-AUC 0.242 for Random Forest on the `<30` vs `>30/NO` task. Their visible setup used all encounter rows after preprocessing, dropped `weight`, `payer_code`, and `medical_specialty`, removed missing race/diagnosis rows, grouped ICD-9 diagnosis codes, kept only insulin from individual medication columns, used 22 risk factors, and used a random 75/25 train/test split.
+The paper reported PR-AUC 0.242 for Random Forest on the `<30` vs `>30/NO` task. Their visible setup used all encounter rows after preprocessing, dropped `weight`, `payer_code`, and `medical_specialty`, removed missing race/diagnosis rows, grouped ICD-9 diagnosis codes, kept only insulin from individual medication columns used 22 risk factors, and used a random 75/25 train/test split.
 
 Local reproduction:
 
@@ -1853,7 +1853,7 @@ Min PR-AUC 0.2096
 
 Interpretation:
 
-Copying the visible paper setup did not reproduce the paper's 0.242 PR-AUC. The reproduction supports the idea that all-encounter evaluation is easier than first-encounter evaluation, but the current all-encounter CatBoost patient-group split still performs better than the local paper-style Random Forest reproduction.
+Copying the visible paper setup did not reproduce the paper's 0.242 PR-AUC. The reproduction supports the idea that all-encounter evaluation is easier than first-encounter evaluation but the current all-encounter CatBoost patient-group split still performs better than the local paper-style Random Forest reproduction.
 
 Final modeling conclusion:
 
@@ -1897,4 +1897,4 @@ Risk / interpretation:
 
 Notebook update:
 
-`hospital_readmission_modeling.ipynb` now includes an extended experiment summary section that reads the saved CSV results and displays comparison tables with accuracy included. It also summarizes the neural-network and imbalance-handling searches from the saved CSV files without rerunning the full training loops.
+`hospital_readmission_modeling.ipynb` now includes an extended experiment summary section that reads the saved CSV results and displays comparison tables with accuracy included. It also summarizes the neural-network and imbalance-handling searches from the saved CSV files without rerunning the full training loops

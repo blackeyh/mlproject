@@ -1,4 +1,4 @@
-Hospital Readmission Prediction - EDA
+Hospital Readmission Prediction (EDA)
 
 Project topic:
 Predict whether a diabetes patient encounter leads to hospital readmission within 30 days.

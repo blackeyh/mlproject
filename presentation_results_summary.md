@@ -22,7 +22,7 @@ Test accuracy: 0.7838
 Recommended wording:
 
 ```text
-The final model is best understood as a readmission risk-ranking model. On a patient-safe held-out test split, it more than doubled PR-AUC over the natural positive rate baseline and produced meaningful lift in the highest-risk patient groups.
+The final model is best understood as a readmission risk-ranking model. On a patient safe held-out test split, it more than doubled PR-AUC over the natural positive rate baseline and produced meaningful lift in the highest-risk patient groups.
 ```
 
 ## Why This Looks Good
@@ -77,7 +77,7 @@ Lift 2.0x over baseline
 Recommended wording:
 
 ```text
-If the hospital reviews only the top 10% highest-risk encounters, the readmission rate in that group is about 27%, compared with 11% overall. That is a 2.45x concentration of risk and captures about one quarter of all 30-day readmissions.
+If the hospital reviews only the top 10% highest-risk encounters the readmission rate in that group is about 27%, compared with 11% overall. That is a 2.45x concentration of risk and captures about one quarter of all 30-day readmissions.
 ```
 
 ## Honest Caveat

@@ -126,12 +126,12 @@ native_catboost_search.py
 
 What was tried:
 
-- CatBoost trained directly on categorical columns instead of one-hot encoded features.
-- Raw administrative IDs.
-- Paper age and raw age variants.
-- Weight category and weight dropped.
-- Medication summaries only.
-- Balanced and SqrtBalanced class weighting.
+- CatBoost trained directly on categorical columns instead of one-hot encoded features
+- Raw administrative IDs
+- Paper age and raw age variants
+- Weight category and weight dropped
+- Medication summaries only
+- Balanced and SqrtBalanced class weighting
 - Depth 4, 5, and 6 variants with different learning rates and L2 regularization.
 
 Best native CatBoost validation PR-AUC:
