@@ -1910,6 +1910,12 @@ plateau_diagnostic_search.py
 plateau_ensemble_search.py
 patient_history_feature_search.py
 patient_history_tuning_search.py
+history_balanced_bagging_search.py
+history_heterogeneous_search.py
+history_catboost_seed_sweep.py
+history_negative_ratio_refinement.py
+history_catboost_order_sensitivity.py
+history_catboost_bootstrap_search.py
 ```
 
 New outputs:
@@ -1925,6 +1931,12 @@ experiment_results/patient_history_feature_results.csv
 experiment_results/patient_history_feature_lift_tables.csv
 experiment_results/patient_history_tuning_results.csv
 experiment_results/patient_history_tuning_lift_tables.csv
+experiment_results/history_balanced_bagging_results.csv
+experiment_results/history_heterogeneous_results.csv
+experiment_results/history_catboost_seed_sweep_results.csv
+experiment_results/history_negative_ratio_refinement_results.csv
+experiment_results/history_catboost_order_sensitivity_results.csv
+experiment_results/history_catboost_bootstrap_results.csv
 plateau_analysis_report.md
 ```
 
@@ -1960,28 +1972,41 @@ These prior-history features are not part of the original first-encounter modeli
 Best observed patient-safe result after this loop:
 
 ```text
-HistoryTuneCat_d6_lr0015_l210_sqrt
-Test PR-AUC 0.2389
-Test ROC-AUC 0.6838
-Test recall 0.3731
-Test precision 0.2400
-Test F1 0.2921
-Test accuracy 0.8006
+NegRefineCat_d6_lr002_neg8_seed202
+Test PR-AUC 0.2415
+Test ROC-AUC 0.6817
+Test recall 0.4446
+Test precision 0.2160
+Test F1 0.2907
+Test accuracy 0.7608
 ```
 
-Most defensible validation-selected history model:
+Most defensible validation-selected single history model:
 
 ```text
-HistoryTuneCat_d6_lr0015_l210_cw025
-Validation PR-AUC 0.2851
-Test PR-AUC 0.2386
-Test ROC-AUC 0.6839
-Test recall 0.4281
-Test precision 0.2225
-Test F1 0.2928
-Test accuracy 0.7720
+NegRefineCat_d6_lr002_neg7.5_seed37
+Validation PR-AUC 0.2879
+Test PR-AUC 0.2414
+Test ROC-AUC 0.6827
+Test recall 0.4226
+Test precision 0.2223
+Test F1 0.2913
+Test accuracy 0.7733
 ```
+
+Additional advanced-search loop:
+
+- balanced CatBoost negative-subset bagging
+- LightGBM, XGBoost, Random Forest, Extra Trees, target-encoded HistGradientBoosting, logistic stackers, and heterogeneous score/rank ensembles
+- focused CatBoost depth/learning-rate/L2/seed sweeps
+- near-full negative-ratio refinement around the best CatBoost setup
+- CatBoost row-order sensitivity and separated row-order seed vs model seed
+- CatBoost Bayesian, Bernoulli, MVS, no-bootstrap, and Ordered boosting variants
+
+Practical conclusion from this loop:
+
+The final gain from 0.2389 to 0.2414/0.2415 came from focused CatBoost ratio/row-order refinement around the patient-history feature set. More complex heterogeneous ensembles, deeper trees, bootstrap variants, and Ordered boosting did not beat the best default CatBoost model. Because the absolute improvement is small and seed/order-sensitive, report 0.2414 as the clean validation-selected result and 0.2415 as the best observed exploratory result.
 
 Final interpretation:
 
-The plateau appears mainly due to dataset limitations and target noise rather than lack of model complexity. The public UCI data contain useful administrative, diagnosis, utilization, and limited longitudinal signal, but they do not include richer clinical information such as vitals, continuous labs, medication doses, discharge plans, notes, social determinants, exact dates, or hospital/provider identifiers. With patient-safe evaluation, the practical ceiling appears to be around PR-AUC 0.24 for this feature set.
+The plateau appears mainly due to dataset limitations and target noise rather than lack of model complexity. The public UCI data contain useful administrative, diagnosis, utilization, and limited longitudinal signal, but they do not include richer clinical information such as vitals, continuous labs, medication doses, discharge plans, notes, social determinants, exact dates, or hospital/provider identifiers. With patient-safe evaluation, the practical ceiling appears to be around PR-AUC 0.24 to 0.242 for this feature set.

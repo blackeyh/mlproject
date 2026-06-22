@@ -4,19 +4,25 @@ Use this framing when presenting the final model. It is intentionally positive, 
 
 ## Main Result to Lead With
 
-Our strongest model after the plateau follow-up is an all-encounter, patient-safe CatBoost model with prior patient-history features:
+Our strongest clean validation-selected model after the plateau follow-up is an all-encounter, patient-safe CatBoost model with prior patient-history features:
 
 ```text
-Model: HistoryTuneCat_d6_lr0015_l210_sqrt
+Model: NegRefineCat_d6_lr002_neg7.5_seed37
 Split: patient-group train/validation/test split
 No patient appears in more than one split.
 
-Test PR-AUC: 0.2389
-Test ROC-AUC: 0.6838
-Test recall: 0.3731
-Test precision: 0.2400
-Test F1: 0.2921
-Test accuracy: 0.8006
+Test PR-AUC: 0.2414
+Test ROC-AUC: 0.6827
+Test recall: 0.4226
+Test precision: 0.2223
+Test F1: 0.2913
+Test accuracy: 0.7733
+```
+
+Best observed exploratory variant:
+
+```text
+PR-AUC 0.2415, ROC-AUC 0.6817, recall 0.4446, precision 0.2160, F1 0.2907, accuracy 0.7608
 ```
 
 Recommended wording:
@@ -31,8 +37,9 @@ Baseline prevalence in the all-encounter patient-safe test set:
 
 ```text
 Positive rate / majority PR-AUC baseline: 0.1103
-Best model PR-AUC: 0.2389
-Relative improvement: about 2.17x baseline
+Best validation-selected model PR-AUC: 0.2414
+Best observed model PR-AUC: 0.2415
+Relative improvement: about 2.19x baseline
 ```
 
 Comparison to the reproduced paper-style Random Forest:
@@ -42,7 +49,7 @@ Paper-style RF, fixed random split: PR-AUC 0.2083
 Paper-style RF, patient-safe split: PR-AUC 0.2027
 Paper-style RF, best of 20 random seeds: PR-AUC 0.2242
 Our patient-safe CatBoost before patient-history features: PR-AUC 0.2290
-Our patient-safe CatBoost with patient-history features: PR-AUC 0.2389
+Our patient-safe CatBoost with patient-history features and final refinement: PR-AUC 0.2414 to 0.2415
 ```
 
 Recommended wording:
@@ -57,28 +64,28 @@ The model is most useful for prioritizing patients for follow-up, not for making
 
 ```text
 Top 1% highest-risk encounters:
-Precision 51.0%
-Lift 4.63x over baseline
+Precision 55.0%
+Lift 4.99x over baseline
 
 Top 5% highest-risk encounters:
-Precision 33.4%
-Lift 3.03x over baseline
+Precision 34.5%
+Lift 3.13x over baseline
 
 Top 10% highest-risk encounters:
-Precision 28.2%
-Recall 25.6%
-Lift 2.56x over baseline
+Precision 28.0%
+Recall 25.4%
+Lift 2.54x over baseline
 
 Top 20% highest-risk encounters:
-Precision 22.3%
-Recall 40.4%
-Lift 2.02x over baseline
+Precision 22.2%
+Recall 40.2%
+Lift 2.01x over baseline
 ```
 
 Recommended wording:
 
 ```text
-If the hospital reviews only the top 10% highest-risk encounters, the readmission rate in that group is about 28%, compared with 11% overall. That is a 2.56x concentration of risk and captures about one quarter of all 30-day readmissions.
+If the hospital reviews only the top 10% highest-risk encounters, the readmission rate in that group is about 28%, compared with 11% overall. That is a 2.54x concentration of risk and captures about one quarter of all 30-day readmissions.
 ```
 
 ## Honest Caveat
@@ -95,10 +102,10 @@ The model is not a standalone clinical decision system. Its precision is still m
 
 ```text
 Final model: Patient-safe CatBoost risk-ranking model with prior patient-history features
-Test PR-AUC: 0.2389, about 2.17x the baseline positive rate
-ROC-AUC: 0.6838
-Best F1: 0.2921
-Top 10% risk group: 28.2% readmission rate, 2.56x lift
-Beat locally reproduced paper-style RF: 0.2389 vs 0.2242 best seed
+Test PR-AUC: 0.2414 validation-selected / 0.2415 best observed, about 2.19x the baseline positive rate
+ROC-AUC: about 0.682
+Best F1: about 0.291
+Top 10% risk group: about 28.0% readmission rate, 2.54x lift
+Beat locally reproduced paper-style RF: 0.2414 vs 0.2242 best seed
 Main takeaway: useful for prioritizing high-risk patients, not perfect binary prediction
 ```

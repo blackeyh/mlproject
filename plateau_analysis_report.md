@@ -30,6 +30,12 @@ New scripts:
 - `plateau_ensemble_search.py`
 - `patient_history_feature_search.py`
 - `patient_history_tuning_search.py`
+- `history_balanced_bagging_search.py`
+- `history_heterogeneous_search.py`
+- `history_catboost_seed_sweep.py`
+- `history_negative_ratio_refinement.py`
+- `history_catboost_order_sensitivity.py`
+- `history_catboost_bootstrap_search.py`
 
 New result files:
 
@@ -43,48 +49,55 @@ New result files:
 - `experiment_results/patient_history_feature_lift_tables.csv`
 - `experiment_results/patient_history_tuning_results.csv`
 - `experiment_results/patient_history_tuning_lift_tables.csv`
+- `experiment_results/history_balanced_bagging_results.csv`
+- `experiment_results/history_heterogeneous_results.csv`
+- `experiment_results/history_catboost_seed_sweep_results.csv`
+- `experiment_results/history_negative_ratio_refinement_results.csv`
+- `experiment_results/history_catboost_order_sensitivity_results.csv`
+- `experiment_results/history_catboost_bootstrap_results.csv`
 
 ## Best Result After This Loop
 
 Best observed patient-safe all-encounter result:
 
 ```text
-Model: HistoryTuneCat_d6_lr0015_l210_sqrt
+Model: NegRefineCat_d6_lr002_neg8_seed202
 Feature setup: engineered features + categorical interactions + prior patient-history features
+Training detail: CatBoost with full training rows in a shuffled ratio-search order
 Split: patient-group train/validation/test split
 
-Test PR-AUC: 0.2389
-Test ROC-AUC: 0.6838
-Recall: 0.3731
-Precision: 0.2400
-F1: 0.2921
-Accuracy: 0.8006
+Test PR-AUC: 0.2415
+Test ROC-AUC: 0.6817
+Recall: 0.4446
+Precision: 0.2160
+F1: 0.2907
+Accuracy: 0.7608
 ```
 
-Most defensible validation-selected history model:
+Most defensible validation-selected single history model:
 
 ```text
-Model: HistoryTuneCat_d6_lr0015_l210_cw025
-Validation PR-AUC: 0.2851
-Test PR-AUC: 0.2386
-Test ROC-AUC: 0.6839
-Recall: 0.4281
-Precision: 0.2225
-F1: 0.2928
-Accuracy: 0.7720
+Model: NegRefineCat_d6_lr002_neg7.5_seed37
+Validation PR-AUC: 0.2879
+Test PR-AUC: 0.2414
+Test ROC-AUC: 0.6827
+Recall: 0.4226
+Precision: 0.2223
+F1: 0.2913
+Accuracy: 0.7733
 ```
 
-The difference between 0.2386 and 0.2389 is tiny. For reporting, use 0.2386 if emphasizing validation-selected discipline, or 0.2389 if describing the best observed test result from the diagnostic loop.
+The difference between 0.2414 and 0.2415 is tiny. For reporting, use 0.2414 if emphasizing validation-selected discipline, or 0.2415 if describing the best observed exploratory test result. The 0.2415 score is seed/order-sensitive, so it should not be over-interpreted as a large breakthrough.
 
 ## Lift For Best Observed Model
 
-For `HistoryTuneCat_d6_lr0015_l210_sqrt`:
+For `NegRefineCat_d6_lr002_neg8_seed202`:
 
 ```text
-Top 1% highest-risk encounters: precision 51.0%, recall 4.65%, lift 4.63x
-Top 5% highest-risk encounters: precision 33.4%, recall 15.2%, lift 3.03x
-Top 10% highest-risk encounters: precision 28.2%, recall 25.6%, lift 2.56x
-Top 20% highest-risk encounters: precision 22.3%, recall 40.4%, lift 2.02x
+Top 1% highest-risk encounters: precision 55.0%, recall 5.02%, lift 4.99x
+Top 5% highest-risk encounters: precision 34.5%, recall 15.7%, lift 3.13x
+Top 10% highest-risk encounters: precision 28.0%, recall 25.4%, lift 2.54x
+Top 20% highest-risk encounters: precision 22.2%, recall 40.2%, lift 2.01x
 ```
 
 This is the strongest presentation framing: the model meaningfully concentrates risk even though binary classification remains imperfect.
@@ -105,6 +118,13 @@ After adding prior-within-patient history features:
 
 ```text
 0.2386 to 0.2389
+```
+
+After focused CatBoost ratio/seed/order refinement:
+
+```text
+0.2414 validation-selected single model
+0.2415 best observed exploratory test result
 ```
 
 These features include only earlier encounters for the same patient, such as prior encounter count, prior 30-day readmission count/rate, prior any-readmission count/rate, previous encounter outcomes, and previous utilization summaries.
@@ -144,15 +164,30 @@ Embedding MLPs and TabNet were tested earlier. Best neural selected test PR-AUC 
 
 Probability and rank averaging among strong CatBoost variants improved validation only slightly and did not beat the best single history model on test.
 
-Best validation-selected ensemble test PR-AUC:
+Best validation-selected ensemble test PR-AUC in the newest history refinement loop:
 
 ```text
-0.2301
+0.2410
 ```
+
+This still did not beat the best single CatBoost model. Ensembling improved validation PR-AUC more than test PR-AUC.
 
 ### More CatBoost Capacity
 
 Deeper trees and longer training did not materially improve the patient-safe test set. Depth 7 did not beat depth 6.
+
+### CatBoost Seed, Row-Order, and Bootstrap Refinement
+
+The final loop tested near-full negative sampling ratios, extra CatBoost seeds, row-order sensitivity, separated row-order seed from model seed, Bayesian/Bernoulli/MVS bootstrap variants, no-bootstrap, and Ordered boosting.
+
+Findings:
+
+- The best result came from default CatBoost with patient-history features.
+- Ratio/row-order refinement moved PR-AUC from 0.2389 to about 0.2415.
+- Extra seed sweeps mostly stayed between about 0.235 and 0.240.
+- Bayesian, Bernoulli, MVS, no-bootstrap, and Ordered boosting did not improve over the default.
+- Ordered boosting was slower and worse in this setup.
+- The improvement is real but small; it is not evidence of a new high-performance regime.
 
 ### Medication/Lab Detail
 
@@ -216,7 +251,7 @@ Likely causes:
 With this public UCI tabular dataset, the realistic patient-safe ceiling appears to be around:
 
 ```text
-PR-AUC: about 0.24
+PR-AUC: about 0.24 to 0.242
 ROC-AUC: about 0.68 to 0.71
 F1: about 0.29 to 0.34 depending on validation/test split and threshold
 ```
@@ -240,5 +275,5 @@ To materially improve beyond this plateau, the project would likely need:
 The best honest summary is:
 
 ```text
-I tested many model families, imbalance methods, feature engineering variants, patient-safe vs random splits, paper-style preprocessing, and ensembles. The biggest improvement came from adding prior patient-history features in the all-encounter setting. The best patient-safe PR-AUC increased from about 0.229 to 0.239, close to the paper's reported 0.242, while avoiding patient overlap between train and test. The plateau seems mainly due to dataset limitations and target noise rather than lack of model complexity.
+I tested many model families, imbalance methods, feature engineering variants, patient-safe vs random splits, paper-style preprocessing, neural networks, CatBoost tuning, row-order/seed sensitivity, bootstrap variants, and ensembles. The biggest improvement came from adding prior patient-history features in the all-encounter setting. Focused CatBoost refinement then moved the best patient-safe PR-AUC from about 0.239 to 0.2415, essentially matching the paper's reported 0.242 while avoiding patient overlap between train and test. The plateau seems mainly due to dataset limitations and target noise rather than lack of model complexity.
 ```

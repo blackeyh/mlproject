@@ -632,23 +632,24 @@ The balanced test makes precision, F1, and accuracy look much higher because hal
 
 ## Presentation-Ready Framing
 
-The best result to lead with is the alternate all-encounter patient-group split model, because it is the strongest performance found while still preventing patient overlap between train, validation, and test.
+The best result to lead with is the final all-encounter patient-group split CatBoost model with prior patient-history features, because it is the strongest performance found while still preventing patient overlap between train, validation, and test.
 
 ```text
 Final performance headline:
-All-encounter patient-safe CatBoost
-Test PR-AUC 0.2290
-Test ROC-AUC 0.6797
-Test F1 0.2802
-Test accuracy 0.7838
+All-encounter patient-safe CatBoost with prior patient-history features
+Validation-selected test PR-AUC 0.2414
+Best observed exploratory test PR-AUC 0.2415
+Test ROC-AUC about 0.682
+Test F1 about 0.291
+Test accuracy about 0.76 to 0.77
 ```
 
 Why this is a strong result:
 
 ```text
 Natural test positive rate / majority PR-AUC baseline: 0.1103
-Best model PR-AUC: 0.2290
-Relative improvement over baseline: about 2.1x
+Best validation-selected model PR-AUC: 0.2414
+Relative improvement over baseline: about 2.19x
 ```
 
 Comparison to the reproduced paper-style Random Forest:
@@ -657,30 +658,32 @@ Comparison to the reproduced paper-style Random Forest:
 Paper-style RF, fixed random split: PR-AUC 0.2083
 Paper-style RF, patient-safe split: PR-AUC 0.2027
 Paper-style RF, best of 20 random seeds: PR-AUC 0.2242
-Our patient-safe CatBoost: PR-AUC 0.2290
+Our patient-safe CatBoost with patient-history features: PR-AUC 0.2414 validation-selected / 0.2415 best observed
 ```
 
 Risk-ranking interpretation:
 
 ```text
-Top 1% highest-risk encounters: precision 49.7%, lift 4.5x
-Top 5% highest-risk encounters: precision 31.9%, lift 2.9x
-Top 10% highest-risk encounters: precision 27.0%, recall 24.5%, lift 2.45x
-Top 20% highest-risk encounters: precision 21.8%, recall 39.6%, lift 2.0x
+Top 1% highest-risk encounters: precision 55.0%, lift 4.99x
+Top 5% highest-risk encounters: precision 34.5%, lift 3.13x
+Top 10% highest-risk encounters: precision 28.0%, recall 25.4%, lift 2.54x
+Top 20% highest-risk encounters: precision 22.2%, recall 40.2%, lift 2.01x
 ```
 
 Recommended wording:
 
 ```text
-The model is best viewed as a patient risk-ranking tool. It does not perfectly classify every readmission, but it more than doubles PR-AUC over the natural baseline and concentrates readmission risk strongly in the highest-risk groups. For example, the top 10% risk group has a 27% readmission rate compared with 11% overall.
+The model is best viewed as a patient risk-ranking tool. It does not perfectly classify every readmission, but it more than doubles PR-AUC over the natural baseline and concentrates readmission risk strongly in the highest-risk groups. For example, the top 10% risk group has about a 28% readmission rate compared with 11% overall.
 ```
 
 Primary validation-selected model family:
 
 ```text
-Refined native CatBoost with raw administrative IDs, paper age groups, medication summaries only,
-rare/unseen category handling, class weighting, and validation-selected threshold tuning.
+All-encounter CatBoost with engineered administrative/diagnosis/utilization features,
+categorical interactions, prior patient-history features, and validation-selected threshold tuning.
 ```
+
+The older first-encounter/accepted-preprocessing results below are retained as audit trail entries, but they are no longer the final headline result after the all-encounter patient-history follow-up.
 
 Most defensible final validation-selected model:
 
@@ -751,6 +754,9 @@ Feature-engineered first-encounter ensemble best selected test PR-AUC: 0.2002
 Feature-engineered first-encounter best selected test F1: 0.2531
 Alternate all-encounter patient-group split best selected test PR-AUC: 0.2290
 Alternate all-encounter patient-group split best selected test F1: 0.2816
+Patient-history tuning best observed test PR-AUC: 0.2389
+Advanced CatBoost ratio/order refinement validation-selected test PR-AUC: 0.2414
+Advanced CatBoost ratio/order refinement best observed test PR-AUC: 0.2415
 ```
 
 The models are still not clinically strong in an absolute sense. Precision remains around 0.20 at useful thresholds, meaning many flagged patients are false positives. However, this is a clear course-project improvement: the model can rank and identify higher-risk patients much better than the baseline while maintaining a transparent validation/test workflow.
@@ -809,41 +815,68 @@ Interpretation:
 
 The largest real improvement came from adding prior-within-patient history features in the all-encounter setting. These features use only earlier encounters for the same patient, such as prior encounter count, prior 30-day readmission count/rate, prior any-readmission count/rate, previous encounter outcomes, and previous utilization summaries.
 
-Best observed patient-safe result after patient-history tuning:
+Best observed patient-safe result after patient-history tuning and advanced CatBoost refinement:
 
 ```text
-HistoryTuneCat_d6_lr0015_l210_sqrt
+NegRefineCat_d6_lr002_neg8_seed202
 Feature setup: engineered features + categorical interactions + prior patient-history features
-Test PR-AUC 0.2389
-Test ROC-AUC 0.6838
-Test recall 0.3731
-Test precision 0.2400
-Test F1 0.2921
-Test accuracy 0.8006
+Training detail: full training rows in a shuffled ratio-search CatBoost order
+Test PR-AUC 0.2415
+Test ROC-AUC 0.6817
+Test recall 0.4446
+Test precision 0.2160
+Test F1 0.2907
+Test accuracy 0.7608
 ```
 
-Most defensible validation-selected history model:
+Most defensible validation-selected single history model:
 
 ```text
-HistoryTuneCat_d6_lr0015_l210_cw025
-Validation PR-AUC 0.2851
-Test PR-AUC 0.2386
-Test ROC-AUC 0.6839
-Test recall 0.4281
-Test precision 0.2225
-Test F1 0.2928
-Test accuracy 0.7720
+NegRefineCat_d6_lr002_neg7.5_seed37
+Validation PR-AUC 0.2879
+Test PR-AUC 0.2414
+Test ROC-AUC 0.6827
+Test recall 0.4226
+Test precision 0.2223
+Test F1 0.2913
+Test accuracy 0.7733
 ```
 
 Best observed risk-ranking lift:
 
 ```text
-Top 1% highest-risk encounters: precision 51.0%, lift 4.63x
-Top 5% highest-risk encounters: precision 33.4%, lift 3.03x
-Top 10% highest-risk encounters: precision 28.2%, recall 25.6%, lift 2.56x
-Top 20% highest-risk encounters: precision 22.3%, recall 40.4%, lift 2.02x
+Top 1% highest-risk encounters: precision 55.0%, lift 4.99x
+Top 5% highest-risk encounters: precision 34.5%, lift 3.13x
+Top 10% highest-risk encounters: precision 28.0%, recall 25.4%, lift 2.54x
+Top 20% highest-risk encounters: precision 22.2%, recall 40.2%, lift 2.01x
 ```
+
+## Advanced CatBoost Refinement Update
+
+Final additional scripts:
+
+```text
+history_balanced_bagging_search.py
+history_heterogeneous_search.py
+history_catboost_seed_sweep.py
+history_negative_ratio_refinement.py
+history_catboost_order_sensitivity.py
+history_catboost_bootstrap_search.py
+```
+
+What was tried:
+
+- balanced CatBoost negative-subset bagging and simple score/rank ensembles
+- heterogeneous models: LightGBM, XGBoost, Random Forest, Extra Trees, target-encoded HistGradientBoosting, logistic stackers
+- focused CatBoost depth, learning-rate, L2, seed, and bootstrap sweeps
+- near-full negative-ratio refinement around the strongest patient-history CatBoost setup
+- row-order sensitivity tests separating row-order seed from CatBoost model seed
+- Bayesian, Bernoulli, MVS, no-bootstrap, and Ordered boosting variants
+
+Main finding:
+
+The useful gain came from focused CatBoost ratio/order refinement, not from larger model families or more complex ensembles. The best validation-selected single model reached PR-AUC 0.2414, and the best observed exploratory variant reached PR-AUC 0.2415. Heterogeneous ensembles topped out lower, and bootstrap/Ordered boosting variants mostly reduced performance.
 
 Final plateau conclusion:
 
-The plateau is probably not mainly a model-complexity problem. CatBoost, XGBoost, LightGBM, Random Forests, neural networks, resampling, threshold tuning, feature engineering, and ensembling were all tested. Patient-safe PR-AUC clustered tightly until adding prior patient history, and even then the best result moved to about 0.239 rather than a fundamentally higher level. With the public UCI tabular features, a practical patient-safe ceiling appears to be around PR-AUC 0.24 unless richer clinical/temporal data are added.
+The plateau is probably not mainly a model-complexity problem. CatBoost, XGBoost, LightGBM, Random Forests, neural networks, resampling, threshold tuning, feature engineering, seed/order sensitivity checks, bootstrap variants, and ensembling were all tested. Patient-safe PR-AUC clustered tightly until adding prior patient history, and the final advanced tuning moved the best result only to about 0.2415. With the public UCI tabular features, a practical patient-safe ceiling appears to be around PR-AUC 0.24 to 0.242 unless richer clinical/temporal data are added.

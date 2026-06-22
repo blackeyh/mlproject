@@ -20,18 +20,27 @@ The model is not perfect at classifying every readmission, but it ranks patients
 
 ## Best Result To Use
 
-Best overall model after the plateau follow-up:
+Best clean validation-selected model after the plateau follow-up:
 
 All-encounter CatBoost with patient-safe train/validation/test split and prior patient-history features.
 
 Metrics:
 
-- PR-AUC: 0.2389
-- ROC-AUC: 0.6838
-- Recall: 0.3731
-- Precision: 0.2400
-- F1: 0.2921
-- Accuracy: 0.8006
+- PR-AUC: 0.2414
+- ROC-AUC: 0.6827
+- Recall: 0.4226
+- Precision: 0.2223
+- F1: 0.2913
+- Accuracy: 0.7733
+
+Best observed exploratory variant:
+
+- PR-AUC: 0.2415
+- ROC-AUC: 0.6817
+- Recall: 0.4446
+- Precision: 0.2160
+- F1: 0.2907
+- Accuracy: 0.7608
 
 Baseline positive rate / majority PR-AUC baseline:
 
@@ -39,7 +48,7 @@ Baseline positive rate / majority PR-AUC baseline:
 
 Simple interpretation:
 
-The model more than doubles the PR-AUC baseline: 0.2389 vs 0.1103.
+The model more than doubles the PR-AUC baseline: 0.2414 vs 0.1103.
 
 ## Paper Comparison
 
@@ -64,7 +73,7 @@ Our local reproduction of the visible paper setup:
 
 Careful wording:
 
-Our model beats the locally reproduced paper setup on PR-AUC, ROC-AUC, precision, F1, and accuracy, but not recall at the selected threshold. The paper itself reports PR-AUC only for the 30-day target, not all these extra metrics. Our best patient-safe result is also close to the paper's reported PR-AUC 0.242.
+Our model beats the locally reproduced paper setup on PR-AUC, ROC-AUC, precision, F1, and accuracy, but not recall at the selected threshold. The paper itself reports PR-AUC only for the 30-day target, not all these extra metrics. Our best patient-safe result is essentially tied with the paper's reported PR-AUC 0.242.
 
 ## Files To Use
 
@@ -90,10 +99,10 @@ Then use:
 - `preprocessing_decision_log.md`  
   Why preprocessing choices were made.
 
-- `experiment_results/all_encounters_group_split_test_results.csv`  
-  Final model metrics.
+- `experiment_results/history_negative_ratio_refinement_results.csv`  
+  Final advanced CatBoost patient-history metrics.
 
-- `experiment_results/all_encounters_group_split_lift_tables.csv`  
+- `experiment_results/history_negative_ratio_refinement_lift_tables.csv`  
   Top-risk group performance. Useful for explaining practical value.
 
 - `experiment_results/paper_reproduction_results.csv`  
@@ -129,4 +138,4 @@ Do not say we beat the paper on every threshold.
 
 ## Best One-Sentence Conclusion
 
-Our final CatBoost model with prior patient-history features achieved PR-AUC 0.2389 on the 30-day readmission task, more than doubling the natural baseline of 0.1103 and outperforming our local reproduction of the closest paper setup, while using a patient-safe evaluation split.
+Our final CatBoost model with prior patient-history features achieved PR-AUC 0.2414 on the 30-day readmission task, more than doubling the natural baseline of 0.1103 and outperforming our local reproduction of the closest paper setup, while using a patient-safe evaluation split.
