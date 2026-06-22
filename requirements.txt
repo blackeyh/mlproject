@@ -7,6 +7,7 @@ imbalanced-learn
 xgboost
 lightgbm
 catboost
+optuna
 torch
 pytorch-tabnet
 jupyter

@@ -36,6 +36,7 @@ New scripts:
 - `history_negative_ratio_refinement.py`
 - `history_catboost_order_sensitivity.py`
 - `history_catboost_bootstrap_search.py`
+- `history_catboost_optuna_search.py`
 
 New result files:
 
@@ -55,6 +56,8 @@ New result files:
 - `experiment_results/history_negative_ratio_refinement_results.csv`
 - `experiment_results/history_catboost_order_sensitivity_results.csv`
 - `experiment_results/history_catboost_bootstrap_results.csv`
+- `experiment_results/history_catboost_optuna_results.csv`
+- `experiment_results/history_catboost_optuna_study.json`
 
 ## Best Result After This Loop
 
@@ -178,7 +181,7 @@ Deeper trees and longer training did not materially improve the patient-safe tes
 
 ### CatBoost Seed, Row-Order, and Bootstrap Refinement
 
-The final loop tested near-full negative sampling ratios, extra CatBoost seeds, row-order sensitivity, separated row-order seed from model seed, Bayesian/Bernoulli/MVS bootstrap variants, no-bootstrap, and Ordered boosting.
+The final loop tested near-full negative sampling ratios, extra CatBoost seeds, row-order sensitivity, separated row-order seed from model seed, Bayesian/Bernoulli/MVS bootstrap variants, no-bootstrap, Ordered boosting, and a 24-trial Optuna search over CatBoost hyperparameters.
 
 Findings:
 
@@ -187,6 +190,7 @@ Findings:
 - Extra seed sweeps mostly stayed between about 0.235 and 0.240.
 - Bayesian, Bernoulli, MVS, no-bootstrap, and Ordered boosting did not improve over the default.
 - Ordered boosting was slower and worse in this setup.
+- Optuna did not beat the known best configuration. The best validation trial was the already-known `NegRefineCat_d6_lr002_neg7.5_seed37` setup, and the best test trial was the already-known `NegRefineCat_d6_lr002_neg8_seed202` setup.
 - The improvement is real but small; it is not evidence of a new high-performance regime.
 
 ### Medication/Lab Detail
@@ -275,5 +279,5 @@ To materially improve beyond this plateau, the project would likely need:
 The best honest summary is:
 
 ```text
-I tested many model families, imbalance methods, feature engineering variants, patient-safe vs random splits, paper-style preprocessing, neural networks, CatBoost tuning, row-order/seed sensitivity, bootstrap variants, and ensembles. The biggest improvement came from adding prior patient-history features in the all-encounter setting. Focused CatBoost refinement then moved the best patient-safe PR-AUC from about 0.239 to 0.2415, essentially matching the paper's reported 0.242 while avoiding patient overlap between train and test. The plateau seems mainly due to dataset limitations and target noise rather than lack of model complexity.
+I tested many model families, imbalance methods, feature engineering variants, patient-safe vs random splits, paper-style preprocessing, neural networks, CatBoost tuning, Optuna search, row-order/seed sensitivity, bootstrap variants, and ensembles. The biggest improvement came from adding prior patient-history features in the all-encounter setting. Focused CatBoost refinement then moved the best patient-safe PR-AUC from about 0.239 to 0.2415, essentially matching the paper's reported 0.242 while avoiding patient overlap between train and test. Optuna did not improve beyond that. The plateau seems mainly due to dataset limitations and target noise rather than lack of model complexity.
 ```

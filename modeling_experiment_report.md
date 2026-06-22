@@ -862,6 +862,7 @@ history_catboost_seed_sweep.py
 history_negative_ratio_refinement.py
 history_catboost_order_sensitivity.py
 history_catboost_bootstrap_search.py
+history_catboost_optuna_search.py
 ```
 
 What was tried:
@@ -872,11 +873,12 @@ What was tried:
 - near-full negative-ratio refinement around the strongest patient-history CatBoost setup
 - row-order sensitivity tests separating row-order seed from CatBoost model seed
 - Bayesian, Bernoulli, MVS, no-bootstrap, and Ordered boosting variants
+- 24-trial Optuna search over CatBoost ratio, seed/order, depth, learning rate, L2, random strength, border count, class weighting, and bootstrap settings
 
 Main finding:
 
-The useful gain came from focused CatBoost ratio/order refinement, not from larger model families or more complex ensembles. The best validation-selected single model reached PR-AUC 0.2414, and the best observed exploratory variant reached PR-AUC 0.2415. Heterogeneous ensembles topped out lower, and bootstrap/Ordered boosting variants mostly reduced performance.
+The useful gain came from focused CatBoost ratio/order refinement, not from larger model families or more complex ensembles. The best validation-selected single model reached PR-AUC 0.2414, and the best observed exploratory variant reached PR-AUC 0.2415. Heterogeneous ensembles topped out lower, bootstrap/Ordered boosting variants mostly reduced performance, and Optuna did not find a better configuration.
 
 Final plateau conclusion:
 
-The plateau is probably not mainly a model-complexity problem. CatBoost, XGBoost, LightGBM, Random Forests, neural networks, resampling, threshold tuning, feature engineering, seed/order sensitivity checks, bootstrap variants, and ensembling were all tested. Patient-safe PR-AUC clustered tightly until adding prior patient history, and the final advanced tuning moved the best result only to about 0.2415. With the public UCI tabular features, a practical patient-safe ceiling appears to be around PR-AUC 0.24 to 0.242 unless richer clinical/temporal data are added.
+The plateau is probably not mainly a model-complexity problem. CatBoost, XGBoost, LightGBM, Random Forests, neural networks, resampling, threshold tuning, feature engineering, Optuna search, seed/order sensitivity checks, bootstrap variants, and ensembling were all tested. Patient-safe PR-AUC clustered tightly until adding prior patient history, and the final advanced tuning moved the best result only to about 0.2415. With the public UCI tabular features, a practical patient-safe ceiling appears to be around PR-AUC 0.24 to 0.242 unless richer clinical/temporal data are added.

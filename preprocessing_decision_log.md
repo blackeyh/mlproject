@@ -1916,6 +1916,7 @@ history_catboost_seed_sweep.py
 history_negative_ratio_refinement.py
 history_catboost_order_sensitivity.py
 history_catboost_bootstrap_search.py
+history_catboost_optuna_search.py
 ```
 
 New outputs:
@@ -1937,6 +1938,8 @@ experiment_results/history_catboost_seed_sweep_results.csv
 experiment_results/history_negative_ratio_refinement_results.csv
 experiment_results/history_catboost_order_sensitivity_results.csv
 experiment_results/history_catboost_bootstrap_results.csv
+experiment_results/history_catboost_optuna_results.csv
+experiment_results/history_catboost_optuna_study.json
 plateau_analysis_report.md
 ```
 
@@ -2002,10 +2005,11 @@ Additional advanced-search loop:
 - near-full negative-ratio refinement around the best CatBoost setup
 - CatBoost row-order sensitivity and separated row-order seed vs model seed
 - CatBoost Bayesian, Bernoulli, MVS, no-bootstrap, and Ordered boosting variants
+- 24-trial Optuna search over the strongest CatBoost/patient-history setup
 
 Practical conclusion from this loop:
 
-The final gain from 0.2389 to 0.2414/0.2415 came from focused CatBoost ratio/row-order refinement around the patient-history feature set. More complex heterogeneous ensembles, deeper trees, bootstrap variants, and Ordered boosting did not beat the best default CatBoost model. Because the absolute improvement is small and seed/order-sensitive, report 0.2414 as the clean validation-selected result and 0.2415 as the best observed exploratory result.
+The final gain from 0.2389 to 0.2414/0.2415 came from focused CatBoost ratio/row-order refinement around the patient-history feature set. More complex heterogeneous ensembles, deeper trees, bootstrap variants, Ordered boosting, and Optuna did not beat the best default CatBoost model. Because the absolute improvement is small and seed/order-sensitive, report 0.2414 as the clean validation-selected result and 0.2415 as the best observed exploratory result.
 
 Final interpretation:
 
