@@ -1,0 +1,13 @@
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+imbalanced-learn
+xgboost
+lightgbm
+catboost
+torch
+pytorch-tabnet
+jupyter
+nbformat
