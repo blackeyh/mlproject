@@ -315,6 +315,17 @@ def run():
     print(validation.sort_values(["pr_auc", "f1"], ascending=False)[cols].head(12).to_string(index=False))
     print("\nAll-encounter selected test results:")
     print(test.sort_values(["pr_auc", "f1"], ascending=False)[cols + ["tn", "fp", "fn", "tp"]].to_string(index=False))
+    headline = test[test["status"].eq("ok")].sort_values(["pr_auc", "f1"], ascending=False).iloc[0]
+    print(
+        "\nHeadline reproducibility check: "
+        f"PR-AUC={headline.pr_auc:.4f}, "
+        f"ROC-AUC={headline.roc_auc:.4f}, "
+        f"recall={headline.recall:.4f}, "
+        f"precision={headline.precision:.4f}, "
+        f"F1={headline.f1:.4f}, "
+        f"accuracy={headline.accuracy:.4f}",
+        flush=True,
+    )
 
 
 if __name__ == "__main__":
