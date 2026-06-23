@@ -1,0 +1,4 @@
+scope,rows,patients,features_before_target,positive_readmitted_30,positive_rate
+Raw UCI file,101766,71518,51,11357,0.11159915885462728
+Eligible after hospice/expired removal,99343,69990,51,11314,0.11388824577474005
+First encounter per patient after removal,69990,69990,51,6285,0.08979854264894985

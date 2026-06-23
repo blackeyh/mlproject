@@ -1,0 +1,3 @@
+report_label,model_name,threshold_strategy,pr_auc,roc_auc,recall,precision,f1,accuracy,negative_ratio,seed,best_iteration
+Validation-selected final model,NegRefineCat_d6_lr002_neg7.5_seed37,best_f1,0.2414058407010183,0.6827043624978588,0.4226299694189602,0.2222579607590865,0.2913153456998313,0.7732667925546264,7.5,37,1498.0
+Best observed exploratory variant,NegRefineCat_d6_lr002_neg8_seed202,best_f1,0.2415173498930586,0.6816812084807276,0.4446483180428134,0.2159833630421865,0.2907418516296741,0.7607903965470731,8.0,202,1466.0

@@ -1,0 +1,5 @@
+setup,split,pr_auc,roc_auc,recall,precision,f1,accuracy,note
+Bhuvan et al. reported RF (<30 target),Paper-reported setup,0.242,,,,,,Paper reports PR-AUC for <30 category; other metrics not available.
+Our local paper-style RF best seed,Local reproduction/sensitivity,0.2242,,,,,,Best local paper-style RF seed from saved sensitivity search.
+Our final validation-selected CatBoost,Patient-safe train/validation/test,0.241406,0.682704,0.42263,0.222258,0.291315,0.773267,Use this for disciplined final reporting.
+Our best observed CatBoost variant,Patient-safe train/validation/test,0.241517,0.681681,0.444648,0.215983,0.290742,0.76079,Exploratory seed/order-sensitive best observed test result.

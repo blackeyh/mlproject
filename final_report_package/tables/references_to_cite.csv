@@ -1,0 +1,4 @@
+source,url,use_in_report
+UCI Diabetes 130-US Hospitals Dataset,https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008,Data source and dataset description.
+"Bhuvan et al. (2016), Identifying Diabetic Patients with High Risk of Readmission",https://arxiv.org/abs/1602.04257,Closest comparison paper and reported PR-AUC 0.242 for <30 readmission target.
+AI1215 ML Project Description,local file: project_description.pdf,Report structure and grading requirements.
