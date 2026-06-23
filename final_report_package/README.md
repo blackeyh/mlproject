@@ -5,10 +5,12 @@ This folder contains the small set of materials needed to write the final AI1215
 ## Start Here
 
 1. Read `report_outline.md`.
-2. Use `tables/model_type_validation_comparison.csv` for the required model comparison table.
-3. Use `tables/final_model_metrics_best_f1.csv` for the final model metrics.
-4. Use `tables/final_model_lift_table.csv` and `figures/final_model_lift_curve.png` for practical interpretation.
-5. Use `source_notes/assignment_requirements_summary.md` to check that the report matches the project description.
+2. Read `WHAT_WORKED_AND_PLATEAU_CONCLUSIONS.md` for the main interpretation and conclusion points.
+3. Use `tables/model_type_validation_comparison.csv` for the required model comparison table.
+4. Use `tables/final_model_metrics_best_f1.csv` for the final model metrics.
+5. Use `tables/final_model_lift_table.csv` and `figures/final_model_lift_curve.png` for practical interpretation.
+6. Use `source_notes/assignment_requirements_summary.md` to check that the report matches the project description.
+7. Use `code/` if the report writer needs the exact notebooks/scripts.
 
 ## Best Numbers To Report
 
@@ -48,6 +50,14 @@ The validation-selected CatBoost model achieved PR-AUC 0.2414 on a patient-safe 
 - `figures/missing_values_top_columns.png`: use in Problem & Data or Preprocessing.
 - `figures/validation_pr_auc_by_modeling_stage.png`: use in Model Selection & Results.
 - `figures/final_model_lift_curve.png`: use in Results or Conclusions.
+
+## Code
+
+- `code/hospital_readmission_eda.ipynb`: EDA notebook.
+- `code/hospital_readmission_modeling.ipynb`: modeling notebook.
+- `code/history_negative_ratio_refinement.py`: final result script.
+- `code/history_catboost_optuna_search.py`: Optuna search that confirmed no better result.
+- `code/README.md`: explains the copied code files.
 
 ## Tables
 
