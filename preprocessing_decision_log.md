@@ -73,7 +73,9 @@ The original modeling notebook used the conservative first-encounter scope docum
 - Use a `weight_recorded` indicator and drop the raw sparse `weight` category.
 - Treat the CatBoost output as a risk score for ranking, not as a calibrated probability.
 
-This section supersedes the earlier first-encounter and drop-weight decisions for the final model pipeline. Those earlier decisions remain documented because they were used for the first modeling notebook and baseline comparisons.
+This section is the source of truth for the submitted final pipeline. It supersedes the earlier first-encounter and drop-weight decisions below; those older entries are retained only as experiment history for the first modeling notebook and baseline comparisons.
+
+When auditing reproducibility, use this section and `FINAL_MODEL_PIPELINE.py` as the final implementation reference. Do not treat historical "accepted" decisions later in this log as current final-model instructions unless they are repeated in this source-of-truth section.
 
 ## Decision 0 - Use a Dedicated Decision Log
 
@@ -2019,11 +2021,13 @@ NegRefineCat_d6_lr002_neg7.5_seed37
 Validation PR-AUC 0.2879
 Test PR-AUC 0.2414
 Test ROC-AUC 0.6827
-Test recall 0.4226
-Test precision 0.2223
-Test F1 0.2913
-Test accuracy 0.7733
+Test recall 0.3621
+Test precision 0.2416
+Test F1 0.2898
+Test accuracy 0.8044
 ```
+
+The same scores also have a diagnostic test-best-F1 threshold row with recall 0.4226, precision 0.2223, F1 0.2913, and accuracy 0.7733. That row is useful for interpretation but should not be described as validation-selected.
 
 Additional advanced-search loop:
 

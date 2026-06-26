@@ -14,6 +14,8 @@ This folder contains the small set of materials needed to write the final AI1215
 
 For reproduction, the current final model should be run from the project root with `python FINAL_MODEL_PIPELINE.py`. The older `experiments/all_encounters_group_split_search.py` script is part of the experiment history, but it is not the final headline model.
 
+Report source-of-truth note: `AI1215_Final_Report_LaTeX.tex` has the corrected validation-threshold metrics. Regenerate `AI1215_Final_Report_LaTeX.pdf` from that source before final submission if the PDF was built before this metric clarification.
+
 ## Best Numbers To Report
 
 Clean validation-selected final model:

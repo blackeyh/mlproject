@@ -100,9 +100,9 @@ Slides: 11 to 16
 
 Omar: On the held-out test set, the final validation-selected CatBoost model achieved PR-AUC 0.2414 and ROC-AUC 0.6827.
 
-Omar: At the selected threshold, recall was 42.3%, precision was 22.2%, F1 was 0.2913, and accuracy was 0.7733.
+Omar: At the validation-selected threshold, recall was 36.2%, precision was 24.2%, F1 was 0.2898, and accuracy was 0.8044.
 
-Omar: The model found 691 of the 1,635 true readmissions in the test set. The majority baseline has higher accuracy, but it finds zero readmissions, so it is not useful for this task.
+Omar: The model found 592 of the 1,635 true readmissions in the test set. The majority baseline has higher accuracy, but it finds zero readmissions, so it is not useful for this task.
 
 ### Slide 12: Risk Stratification
 

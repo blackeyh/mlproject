@@ -1,3 +1,4 @@
-report_label,model_name,threshold_strategy,pr_auc,roc_auc,recall,precision,f1,accuracy,negative_ratio,seed,best_iteration
-Validation-selected final model,NegRefineCat_d6_lr002_neg7.5_seed37,best_f1,0.2414058407010183,0.6827043624978588,0.4226299694189602,0.2222579607590865,0.2913153456998313,0.7732667925546264,7.5,37,1498.0
-Best observed exploratory variant,NegRefineCat_d6_lr002_neg8_seed202,best_f1,0.2415173498930586,0.6816812084807276,0.4446483180428134,0.2159833630421865,0.2907418516296741,0.7607903965470731,8.0,202,1466.0
+report_label,model_name,threshold_strategy,threshold_source,pr_auc,roc_auc,recall,precision,f1,accuracy,negative_ratio,seed,best_iteration
+Final model official validation-selected threshold,NegRefineCat_d6_lr002_neg7.5_seed37,validation_best_f1,validation,0.24140584070101836,0.6827043624978588,0.3620795107033639,0.2416326530612245,0.2898408812729498,0.8043566226058808,7.5,37,1498
+Final model diagnostic test-best-F1 threshold,NegRefineCat_d6_lr002_neg7.5_seed37,test_best_f1_diagnostic_only,test,0.24140584070101836,0.6827043624978588,0.42262996941896025,0.22225796075908652,0.29131534569983136,0.7732667925546264,7.5,37,1498
+Best observed exploratory variant diagnostic threshold,NegRefineCat_d6_lr002_neg8_seed202,best_f1,test,0.2415173498930586,0.6816812084807276,0.4446483180428134,0.2159833630421865,0.2907418516296741,0.7607903965470731,8.0,202,1466.0

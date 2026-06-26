@@ -54,8 +54,8 @@ The interactive mode asks for patient encounter information one field at a time,
 ## Most Important Files
 
 - `FINAL_MODEL_PIPELINE.py`: self-contained final model file. It contains the final preprocessing, feature engineering, CatBoost training, evaluation, and optional patient prediction demo.
-- `final_report_package/AI1215_Final_Report_LaTeX.pdf`: final report PDF.
-- `final_report_package/AI1215_Final_Report_LaTeX.tex`: final report LaTeX source.
+- `final_report_package/AI1215_Final_Report_LaTeX.tex`: final report LaTeX source and current report source of truth.
+- `final_report_package/AI1215_Final_Report_LaTeX.pdf`: generated report PDF; regenerate it from the LaTeX source before final submission if the PDF timestamp predates the latest metric clarification.
 - `final_report_package/PRESENTATION_SCRIPT.md`: presentation speaking script.
 - `PROFESSOR_SUBMISSION_GUIDE.md`: short guide explaining what to inspect.
 - `hospital_readmission_eda.ipynb`: EDA notebook.

@@ -13,10 +13,16 @@ No patient appears in more than one split.
 
 Test PR-AUC: 0.2414
 Test ROC-AUC: 0.6827
-Test recall: 0.4226
-Test precision: 0.2223
-Test F1: 0.2913
-Test accuracy: 0.7733
+Validation-threshold test recall: 0.3621
+Validation-threshold test precision: 0.2416
+Validation-threshold test F1: 0.2898
+Validation-threshold test accuracy: 0.8044
+```
+
+Diagnostic test-best-F1 threshold for the same model:
+
+```text
+Recall 0.4226, precision 0.2223, F1 0.2913, accuracy 0.7733
 ```
 
 Best observed exploratory variant:

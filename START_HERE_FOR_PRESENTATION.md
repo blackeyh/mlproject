@@ -28,10 +28,12 @@ Metrics:
 
 - PR-AUC: 0.2414
 - ROC-AUC: 0.6827
-- Recall: 0.4226
-- Precision: 0.2223
-- F1: 0.2913
-- Accuracy: 0.7733
+- Recall at validation-selected threshold: 0.3621
+- Precision at validation-selected threshold: 0.2416
+- F1 at validation-selected threshold: 0.2898
+- Accuracy at validation-selected threshold: 0.8044
+
+Diagnostic test-best-F1 threshold for the same model: recall 0.4226, precision 0.2223, F1 0.2913, accuracy 0.7733.
 
 Best observed exploratory variant:
 

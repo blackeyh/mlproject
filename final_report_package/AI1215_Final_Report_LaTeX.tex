@@ -246,7 +246,7 @@ Majority/prevalence baseline & 0.118 & 0.500 & 0.000 & 0.000 & 0.000 & 0.882 \\
 
 \tightsubsection{What improved from the earlier model}
 
-The earlier draft reported test PR-AUC 0.2290. The final validation-selected model reports PR-AUC 0.2414, and the best observed exploratory variant reaches 0.2415. The improvement came mostly from the feature/data setup rather than from simply increasing model complexity. The final setup added stronger prior patient-history features, categorical interactions, refined negative sampling, and a more stable CatBoost configuration. The biggest practical change is recall: the earlier best-F1 model recalled about 35.0\% of readmissions, while the final validation-selected model recalls about 42.3\%.
+The earlier draft reported test PR-AUC 0.2290. The final validation-selected model reports PR-AUC 0.2414, and the best observed exploratory variant reaches 0.2415. The improvement came mostly from the feature/data setup rather than from simply increasing model complexity. The final setup added stronger prior patient-history features, categorical interactions, refined negative sampling, and a more stable CatBoost configuration. At the official validation-selected threshold, the final model recalls about 36.2\% of readmissions with 24.2\% precision. A diagnostic threshold selected directly on the test set can raise recall to 42.3\%, but that row is not used as the official operating point.
 
 Accuracy decreased from the earlier best-F1 model because the final model predicts more positives. This is not a failure. In an imbalanced task, a model can increase accuracy by predicting negative too often, but that misses patients who actually return. The final model accepts more false positives in exchange for catching more true readmissions, which is more aligned with the clinical triage use case.
 
@@ -287,20 +287,21 @@ Optuna hyperparameter search & Rediscovered the known strong CatBoost setup; no 
 
 \begin{table}[H]
 \centering
-\caption{Held-out test performance at the validation-selected best-F1 operating point.}
+\caption{Held-out test performance. The first model row uses the validation-selected threshold; diagnostic rows are labeled separately.}
 \scriptsize
 \begin{tabularx}{0.98\textwidth}{Yrrrrrrrrrr}
 \toprule
 Model & PR-AUC & ROC & Recall & Prec. & F1 & Acc. & TN & FP & FN & TP \\
 \midrule
-Validation-selected CatBoost & 0.2414 & 0.6827 & 0.4226 & 0.2223 & 0.2913 & 0.7733 & 10,775 & 2,418 & 944 & 691 \\
+Validation-selected CatBoost & 0.2414 & 0.6827 & 0.3621 & 0.2416 & 0.2898 & 0.8044 & 11,335 & 1,858 & 1,043 & 592 \\
+Diagnostic test-best-F1 row & 0.2414 & 0.6827 & 0.4226 & 0.2223 & 0.2913 & 0.7733 & 10,775 & 2,418 & 944 & 691 \\
 Best observed exploratory variant & 0.2415 & 0.6817 & 0.4446 & 0.2160 & 0.2907 & 0.7608 & 10,554 & 2,639 & 908 & 727 \\
 Majority baseline & 0.1103 & 0.5000 & 0.0000 & 0.0000 & 0.0000 & 0.8897 & 13,193 & 0 & 1,635 & 0 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The majority baseline has the highest accuracy because it predicts the negative class for every encounter, but it has zero recall and zero F1. The final CatBoost model gives up some accuracy to identify real readmissions. At the chosen threshold, it finds 691 of 1,635 readmissions, while the majority baseline finds none.
+The majority baseline has the highest accuracy because it predicts the negative class for every encounter, but it has zero recall and zero F1. The final CatBoost model gives up some accuracy to identify real readmissions. At the validation-selected threshold, it finds 592 of 1,635 readmissions, while the majority baseline finds none. The diagnostic test-best-F1 threshold finds 691 readmissions but is not used as the official operating point.
 
 \begin{figure}[H]
 \centering

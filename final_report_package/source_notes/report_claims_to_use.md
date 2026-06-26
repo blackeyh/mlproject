@@ -25,11 +25,13 @@ The validation-selected final CatBoost model achieved:
 ```text
 PR-AUC 0.2414
 ROC-AUC 0.6827
-Recall 0.4226
-Precision 0.2223
-F1 0.2913
-Accuracy 0.7733
+Recall 0.3621
+Precision 0.2416
+F1 0.2898
+Accuracy 0.8044
 ```
+
+These threshold-sensitive metrics use the official validation-selected threshold. A diagnostic test-best-F1 threshold for the same score vector gives recall 0.4226, precision 0.2223, F1 0.2913, and accuracy 0.7733, but it should not be presented as validation-selected.
 
 The best observed exploratory variant reached PR-AUC 0.2415, but it is seed/order-sensitive.
 

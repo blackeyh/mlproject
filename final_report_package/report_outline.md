@@ -87,11 +87,13 @@ Final model:
 Validation-selected model: NegRefineCat_d6_lr002_neg7.5_seed37
 Test PR-AUC: 0.2414
 ROC-AUC: 0.6827
-Recall: 0.4226
-Precision: 0.2223
-F1: 0.2913
-Accuracy: 0.7733
+Recall at validation-selected threshold: 0.3621
+Precision at validation-selected threshold: 0.2416
+F1 at validation-selected threshold: 0.2898
+Accuracy at validation-selected threshold: 0.8044
 ```
+
+The older recall 0.4226 / F1 0.2913 row is diagnostic because that threshold is selected from the test set.
 
 Best observed exploratory variant:
 
