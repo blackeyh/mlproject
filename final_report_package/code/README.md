@@ -4,20 +4,26 @@ This folder contains the main notebooks and scripts needed to support the final 
 
 ## Main Notebooks
 
-- `hospital_readmission_eda.ipynb`  
+- `hospital_readmission_eda.ipynb`
   EDA notebook: dataset understanding, missing values, class imbalance, and visual exploration.
 
-- `hospital_readmission_modeling.ipynb`  
+- `hospital_readmission_modeling.ipynb`
   Original modeling notebook with the course-project baseline workflow.
 
 ## Final Result Scripts
 
-- `history_negative_ratio_refinement.py`  
-  Most important final script. Reproduces the best CatBoost patient-history refinement results:
+- `../../FINAL_MODEL_PIPELINE.py`
+  Canonical one-file final model pipeline. This is the clearest file for the professor:
+  it loads the raw data, applies final preprocessing/feature engineering, trains the
+  validation-selected CatBoost model, and writes final metrics/lift outputs.
+
+- `history_negative_ratio_refinement.py`
+  Experiment-history script. Reproduces the CatBoost patient-history negative-ratio
+  refinement results:
   - validation-selected final model: PR-AUC `0.2414`
   - best observed exploratory variant: PR-AUC `0.2415`
 
-- `history_catboost_optuna_search.py`  
+- `history_catboost_optuna_search.py`
   Optuna hyperparameter search. Confirms Optuna did not improve beyond the known best CatBoost setup.
 
 ## Supporting Scripts
@@ -48,7 +54,19 @@ From the project root, install requirements and run the canonical root script:
 
 ```bash
 /opt/anaconda3/bin/python -m pip install -r requirements.txt
-/opt/anaconda3/bin/python history_negative_ratio_refinement.py
+/opt/anaconda3/bin/python FINAL_MODEL_PIPELINE.py
+```
+
+For an exact package-version snapshot of the local environment used for the final experiments:
+
+```bash
+/opt/anaconda3/bin/python -m pip install -r requirements-pinned.txt
+```
+
+For a fast wiring check without training:
+
+```bash
+/opt/anaconda3/bin/python FINAL_MODEL_PIPELINE.py --dry-run
 ```
 
 The scripts expect the raw dataset at:

@@ -62,30 +62,38 @@ The published paper reports a higher number, but using the visible method detail
 
 The model is most useful for prioritizing patients for follow-up, not for making a perfect yes/no prediction.
 
+Validation-selected final model:
+
 ```text
 Top 1% highest-risk encounters:
-Precision 55.0%
-Lift 4.99x over baseline
+Precision 52.3%
+Lift 4.75x over baseline
 
 Top 5% highest-risk encounters:
-Precision 34.5%
-Lift 3.13x over baseline
+Precision 33.4%
+Lift 3.03x over baseline
 
 Top 10% highest-risk encounters:
-Precision 28.0%
-Recall 25.4%
-Lift 2.54x over baseline
+Precision 27.8%
+Recall 25.3%
+Lift 2.53x over baseline
 
 Top 20% highest-risk encounters:
-Precision 22.2%
-Recall 40.2%
-Lift 2.01x over baseline
+Precision 22.3%
+Recall 40.5%
+Lift 2.02x over baseline
+```
+
+Best observed exploratory variant:
+
+```text
+Top 1% precision 55.0%, top 5% precision 34.5%, top 10% precision 28.0%.
 ```
 
 Recommended wording:
 
 ```text
-If the hospital reviews only the top 10% highest-risk encounters, the readmission rate in that group is about 28%, compared with 11% overall. That is a 2.54x concentration of risk and captures about one quarter of all 30-day readmissions.
+If the hospital reviews only the top 10% highest-risk encounters from the validation-selected final model, the readmission rate in that group is about 27.8%, compared with 11% overall. That is a 2.53x concentration of risk and captures about one quarter of all 30-day readmissions.
 ```
 
 ## Honest Caveat
@@ -105,7 +113,7 @@ Final model: Patient-safe CatBoost risk-ranking model with prior patient-history
 Test PR-AUC: 0.2414 validation-selected / 0.2415 best observed, about 2.19x the baseline positive rate
 ROC-AUC: about 0.682
 Best F1: about 0.291
-Top 10% risk group: about 28.0% readmission rate, 2.54x lift
+Top 10% risk group: about 27.8% readmission rate, 2.53x lift for the validation-selected final model
 Beat locally reproduced paper-style RF: 0.2414 vs 0.2242 best seed
 Main takeaway: useful for prioritizing high-risk patients, not perfect binary prediction
 ```

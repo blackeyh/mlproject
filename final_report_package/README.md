@@ -12,6 +12,8 @@ This folder contains the small set of materials needed to write the final AI1215
 6. Use `source_notes/assignment_requirements_summary.md` to check that the report matches the project description.
 7. Use `code/` if the report writer needs the exact notebooks/scripts.
 
+For reproduction, the current final model should be run from the project root with `python FINAL_MODEL_PIPELINE.py`. The older `all_encounters_group_split_search.py` script is part of the experiment history, but it is not the final headline model.
+
 ## Best Numbers To Report
 
 Clean validation-selected final model:
@@ -53,9 +55,12 @@ The validation-selected CatBoost model achieved PR-AUC 0.2414 on a patient-safe 
 
 ## Code
 
+- `../FINAL_MODEL_PIPELINE.py`: canonical one-file final model pipeline. It loads `archive/diabetic_data.csv`, applies final preprocessing/feature engineering, trains the final CatBoost model, and writes metrics/lift outputs.
+- `../requirements.txt`: flexible dependency list.
+- `../requirements-pinned.txt`: exact local package snapshot used for the final experiments.
 - `code/hospital_readmission_eda.ipynb`: EDA notebook.
 - `code/hospital_readmission_modeling.ipynb`: modeling notebook.
-- `code/history_negative_ratio_refinement.py`: final result script.
+- `code/history_negative_ratio_refinement.py`: experiment-history script that produced the negative-ratio refinement tables.
 - `code/history_catboost_optuna_search.py`: Optuna search that confirmed no better result.
 - `code/README.md`: explains the copied code files.
 

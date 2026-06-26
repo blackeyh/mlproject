@@ -79,41 +79,44 @@ Our model beats the locally reproduced paper setup on PR-AUC, ROC-AUC, precision
 
 Start with:
 
-- `presentation_results_summary.md`  
+- `presentation_results_summary.md`
   Best slide source. Use this first.
 
 Then use:
 
-- `hospital_readmission_eda.ipynb`  
+- `hospital_readmission_eda.ipynb`
   EDA plots, missing values, class imbalance, dataset understanding.
 
-- `hospital_readmission_modeling.ipynb`  
-  Main modeling notebook and final pipeline.
+- `hospital_readmission_modeling.ipynb`
+  Main modeling notebook and model-comparison summary.
 
-- `modeling_experiment_report.md`  
+- `FINAL_MODEL_PIPELINE.py`
+  Canonical one-file final model pipeline: final preprocessing, final CatBoost training, and final evaluation.
+
+- `modeling_experiment_report.md`
   Full record of models tried and results.
 
-- `plateau_analysis_report.md`  
+- `plateau_analysis_report.md`
   Best file for explaining why the result plateaued and what improved it.
 
-- `preprocessing_decision_log.md`  
+- `preprocessing_decision_log.md`
   Why preprocessing choices were made.
 
-- `experiment_results/history_negative_ratio_refinement_results.csv`  
+- `experiment_results/history_negative_ratio_refinement_results.csv`
   Final advanced CatBoost patient-history metrics.
 
-- `experiment_results/history_negative_ratio_refinement_lift_tables.csv`  
+- `experiment_results/history_negative_ratio_refinement_lift_tables.csv`
   Top-risk group performance. Useful for explaining practical value.
 
-- `experiment_results/paper_reproduction_results.csv`  
+- `experiment_results/paper_reproduction_results.csv`
   Paper reproduction comparison.
 
 Optional:
 
-- `project_description.pdf`  
+- `project_description.pdf`
   Assignment description and topic wording.
 
-- `README.txt`  
+- `README.txt`
   How to reproduce the work.
 
 ## Suggested Slide Order

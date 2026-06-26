@@ -9,4 +9,5 @@ __pycache__/
 venv/
 env/
 catboost_info/
+final_model_outputs/
 *.log
