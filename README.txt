@@ -1,70 +1,134 @@
-Hospital Readmission Prediction (EDA)
+# Hospital Readmission Prediction
 
-Project topic:
-Predict whether a diabetes patient encounter leads to hospital readmission within 30 days.
+Course project for predicting 30-day hospital readmission among diabetic patient encounters using the UCI Diabetes 130-US Hospitals dataset.
 
-Main files:
-- FINAL_MODEL_PIPELINE.py: canonical one-file final model pipeline. This is the file to run if the professor wants the final preprocessing + final CatBoost training + final evaluation in one obvious place.
-- archive/diabetic_data.csv: raw UCI Diabetes 130-US Hospitals dataset.
-- project_description.pdf: AI1215 course project description.
-- prediction-on-hospital-readmission.ipynb: old starting notebook.
-- hospital_readmission_eda.ipynb: new EDA-focused notebook.
-- hospital_readmission_modeling.ipynb: modeling notebook with baseline models and extended experiment summary.
-- preprocessing_decision_log.md: source-of-truth preprocessing and modeling decision log.
-- modeling_experiment_report.md: summary of the extended model search.
-- plateau_analysis_report.md: final follow-up explaining the performance plateau and the best advanced patient-history result.
-- presentation_results_summary.md: concise presentation-ready result framing.
-- START_HERE_FOR_PRESENTATION.md: handoff guide for presentation work.
-- experiment_results/: CSV audit trail for broad, targeted, native CatBoost, ensemble, neural-network, imbalance-handling, feature-engineering, CatBoost-tuning, balanced-test, alternate row-scope, paper-reproduction, plateau-diagnostic, patient-history, advanced ensemble, seed/order, bootstrap, and Optuna experiments.
-- modeling_experiments.py, targeted_modeling_search.py, native_catboost_search.py, ensemble_search.py, neural_network_search.py, imbalance_experiments.py, imbalance_refinement_search.py, imbalance_refined_ensemble.py, feature_engineering_search.py, feature_engineering_ensemble.py, catboost_tuning_search.py, balanced_test_evaluation.py, all_encounters_group_split_search.py, paper_reproduction_search.py, plateau_diagnostic_search.py, plateau_ensemble_search.py, patient_history_feature_search.py, patient_history_tuning_search.py, history_balanced_bagging_search.py, history_heterogeneous_search.py, history_catboost_seed_sweep.py, history_negative_ratio_refinement.py, history_catboost_order_sensitivity.py, history_catboost_bootstrap_search.py, history_catboost_optuna_search.py: experiment scripts used to produce the saved comparison tables.
-- requirements.txt: flexible Python package list for running the notebooks and scripts.
-- requirements-pinned.txt: exact package versions from the local environment used for the final experiments.
+The final model is a patient-safe CatBoost risk-ranking model. It is meant to prioritize patients for follow-up review, not to replace clinical judgment.
 
-How to run:
-1. Install the packages in requirements.txt.
+## Final Result
 
-   pip install -r requirements.txt
+Validation-selected final model:
 
-   For a closer reproduction of this local environment, use:
+```text
+Model: NegRefineCat_d6_lr002_neg7.5_seed37
+PR-AUC: 0.2414
+ROC-AUC: 0.6827
+Recall: 0.4226
+Precision: 0.2223
+F1: 0.2913
+Accuracy: 0.7733
+```
 
-   pip install -r requirements-pinned.txt
+Baseline positive rate / natural PR-AUC baseline: `0.1103`.
 
-2. For the final model, run:
+Interpretation: the final model more than doubles the natural PR-AUC baseline and works best as a risk-ranking tool for identifying higher-risk discharges.
 
-   python FINAL_MODEL_PIPELINE.py
+## Quick Start
 
-   For a fast wiring check without training, run:
+Install dependencies:
 
-   python FINAL_MODEL_PIPELINE.py --dry-run
+```bash
+pip install -r requirements.txt
+```
 
-3. For notebooks, open hospital_readmission_eda.ipynb or hospital_readmission_modeling.ipynb from this folder and run all cells.
+For the exact local package snapshot used in the final experiments:
 
-All code expects the raw data at archive/diabetic_data.csv.
+```bash
+pip install -r requirements-pinned.txt
+```
 
-Final result reproducibility note:
-The final headline result is produced by FINAL_MODEL_PIPELINE.py, not by the older
-all_encounters_group_split_search.py experiment script. FINAL_MODEL_PIPELINE.py writes:
-- final_model_outputs/final_pipeline_summary.json
-- final_model_outputs/final_split_summary.csv
-- final_model_outputs/final_model_metrics.csv
-- final_model_outputs/final_model_lift_table.csv
-- final_model_outputs/final_validation_scores.npy
-- final_model_outputs/final_test_scores.npy
+Run the canonical final model pipeline:
 
-Expected validation-selected final test metrics:
-- PR-AUC: 0.2414
-- ROC-AUC: 0.6827
-- Recall: 0.4226
-- Precision: 0.2223
-- F1: 0.2913
-- Accuracy: 0.7733
+```bash
+python FINAL_MODEL_PIPELINE.py
+```
 
-Current scope:
-This stage covers data loading, target definition, missing-value review, class balance,
-patient/encounter granularity, diagnosis grouping, medication summaries, utilization EDA,
-preprocessing pipelines, model training, model comparison, threshold tuning, lift tables,
-and extended model-search documentation, including neural-network, imbalance-handling,
-feature-engineering, balanced-test sensitivity, all-encounter patient-group split,
-paper-reproduction comparisons, plateau diagnostics, prior patient-history features,
-advanced CatBoost seed/order sensitivity, negative-ratio refinement, bootstrap checks,
-and Optuna hyperparameter search.
+Fast wiring check without training:
+
+```bash
+python FINAL_MODEL_PIPELINE.py --dry-run
+```
+
+Quick smoke-test training run:
+
+```bash
+python FINAL_MODEL_PIPELINE.py --quick
+```
+
+All code expects the raw UCI file at:
+
+```text
+archive/diabetic_data.csv
+```
+
+## Interactive Patient Prediction Demo
+
+After a normal terminal run, the final pipeline asks whether you want to enter a patient manually.
+
+You can also force the prompt with:
+
+```bash
+python FINAL_MODEL_PIPELINE.py --interactive-predict
+```
+
+The script asks for encounter information one field at a time, including age group, diagnoses, admission/discharge details, prior utilization, lab results, and medication status. It then prints:
+
+- estimated 30-day readmission probability
+- the validation-selected classification threshold
+- whether the patient is above or below that threshold
+- where the patient ranks compared with held-out test encounters
+
+This demo uses the same preprocessing and feature engineering path as the final model. It is for project demonstration only and should not be treated as medical advice.
+
+## Main Files
+
+- `FINAL_MODEL_PIPELINE.py`: single-file final model pipeline. It loads the raw data, builds final features, trains CatBoost, evaluates the held-out test set, writes outputs, and optionally runs the interactive prediction prompt.
+- `PROFESSOR_SUBMISSION_GUIDE.md`: concise guide to what the professor should inspect.
+- `final_report_package/`: final report materials, tables, figures, LaTeX source, PDF, and presentation script.
+- `hospital_readmission_eda.ipynb`: EDA notebook.
+- `hospital_readmission_modeling.ipynb`: modeling notebook with baseline models and saved experiment summaries.
+- `preprocessing_decision_log.md`: preprocessing and modeling decision log.
+- `modeling_experiment_report.md`: broad experiment search summary.
+- `plateau_analysis_report.md`: explanation of the performance plateau and why results are limited.
+- `presentation_results_summary.md`: slide-ready results and interpretation.
+- `START_HERE_FOR_PRESENTATION.md`: handoff guide for presentation work.
+- `experiment_results/`: CSV audit trail from model searches, feature-engineering loops, imbalance experiments, neural-network tests, paper reproduction, CatBoost tuning, and plateau diagnostics.
+- `requirements.txt`: flexible dependency list.
+- `requirements-pinned.txt`: exact local package versions used for the final experiments.
+
+## Final Pipeline Outputs
+
+Running `python FINAL_MODEL_PIPELINE.py` writes:
+
+- `final_model_outputs/final_pipeline_summary.json`
+- `final_model_outputs/final_split_summary.csv`
+- `final_model_outputs/final_model_metrics.csv`
+- `final_model_outputs/final_model_lift_table.csv`
+- `final_model_outputs/final_validation_scores.npy`
+- `final_model_outputs/final_test_scores.npy`
+
+`final_model_outputs/` is intentionally ignored by Git because these files are generated outputs.
+
+## Experiment History
+
+The repository keeps the broader experiment history because the professor asked to include what was tried. Important scripts include:
+
+- `modeling_experiments.py`
+- `targeted_modeling_search.py`
+- `native_catboost_search.py`
+- `ensemble_search.py`
+- `neural_network_search.py`
+- `imbalance_experiments.py`
+- `feature_engineering_search.py`
+- `catboost_tuning_search.py`
+- `all_encounters_group_split_search.py`
+- `paper_reproduction_search.py`
+- `plateau_diagnostic_search.py`
+- `patient_history_feature_search.py`
+- `history_negative_ratio_refinement.py`
+- `history_catboost_optuna_search.py`
+
+The older `all_encounters_group_split_search.py` result is part of the experiment history. The current final headline result comes from `FINAL_MODEL_PIPELINE.py`.
+
+## Caveat
+
+The performance plateau is expected for this dataset because the target is imbalanced and the dataset lacks richer clinical information such as exact dates, vitals, continuous lab values, medication doses, discharge plans, hospital/provider identifiers, and social determinants of health.
