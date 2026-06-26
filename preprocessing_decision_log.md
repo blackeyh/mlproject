@@ -59,6 +59,22 @@ After each decision, this file should be updated before moving to the next prepr
 
 From Decision 8 onward, we will focus detailed discussion on controversial or high-impact choices. Standard choices that are clearly required by the dataset documentation or basic ML practice can be documented briefly, while choices that affect leakage, target definition, feature meaning, fairness, model performance, or evaluation should receive full comparison and rationale.
 
+## Final Model Source of Truth
+
+Status: accepted final implementation
+
+The original modeling notebook used the conservative first-encounter scope documented in Decision 1. After extended experiments and professor feedback, the final submitted model was reframed around the strongest patient-safe predictive setup:
+
+- Use all eligible encounters, not only the first encounter per patient.
+- Remove hospice/expired discharge disposition IDs `[11, 13, 14, 19, 20, 21]`.
+- Split by `patient_nbr` into train/validation/test so no patient appears in more than one split.
+- Use `readmitted_30 = 1` when `readmitted == "<30"` and `0` otherwise.
+- Keep prior patient-history features only when they use earlier encounters for the same patient ordered by `encounter_id`.
+- Use a `weight_recorded` indicator and drop the raw sparse `weight` category.
+- Treat the CatBoost output as a risk score for ranking, not as a calibrated probability.
+
+This section supersedes the earlier first-encounter and drop-weight decisions for the final model pipeline. Those earlier decisions remain documented because they were used for the first modeling notebook and baseline comparisons.
+
 ## Decision 0 - Use a Dedicated Decision Log
 
 Status: accepted
@@ -86,7 +102,7 @@ This log must be kept up to date manually as decisions are made.
 
 ## Decision 1 - Modeling Row Scope
 
-Status: accepted
+Status: accepted for first modeling notebook; superseded for final model by the final source-of-truth section above
 
 Question:
 What rows should be used for the first modeling dataset?
@@ -451,7 +467,7 @@ The columns have very different levels and meanings of missingness. Splitting th
 
 ## Decision 4 - Handling `weight`
 
-Status: accepted
+Status: accepted for first modeling notebook; superseded for final model
 
 Question:
 How should the `weight` column be handled?
@@ -491,6 +507,10 @@ Implementation impact:
 - Drop `weight` from `X`.
 - Do not impute `weight`.
 - Do not create `weight_recorded` in the first modeling version.
+
+Final-model update:
+
+The final CatBoost pipeline uses Option 3, a binary `weight_recorded` feature, and still drops the raw `weight` category. This preserves a small documentation-signal feature without asking the model to learn from very sparse weight bins.
 
 Risks / assumptions:
 
@@ -1359,6 +1379,8 @@ After the first modeling notebook was completed, the project goal changed from a
 
 Files created:
 
+These experiment scripts are now stored under the root-level `experiments/` folder.
+
 ```text
 modeling_experiments.py
 targeted_modeling_search.py
@@ -1371,12 +1393,16 @@ experiment_results/
 
 Dependency update:
 
-`requirements.txt` now includes:
+The final `requirements.txt` is pinned and minimal for `FINAL_MODEL_PIPELINE.py`. The broader experiment stack is kept separately in `requirements-experiments.txt`, which includes:
 
 ```text
 xgboost
 lightgbm
 catboost
+imbalanced-learn
+optuna
+torch
+pytorch-tabnet
 ```
 
 What was tried:
@@ -1745,7 +1771,7 @@ Alternate row-scope performance experiment:
 
 ```text
 Script:
-all_encounters_group_split_search.py
+experiments/all_encounters_group_split_search.py
 
 Scope:
 - use all eligible encounters
@@ -1754,7 +1780,7 @@ Scope:
 - keep the same readmitted_30 target
 ```
 
-This does not replace Decision 1 automatically. Decision 1 remains the accepted course-project scope unless the project is explicitly reframed around all eligible encounters. This alternate experiment was run because the first-encounter models plateaued near PR-AUC 0.20.
+This later became the accepted final modeling scope because the first-encounter models plateaued near PR-AUC 0.20 and the professor asked for the strongest possible patient-safe result. Decision 1 remains documented as the original conservative notebook scope, but the final pipeline uses this all-eligible-encounter patient-group split.
 
 Patient-group split summary:
 
@@ -1905,6 +1931,8 @@ After the first all-encounter patient-safe model plateaued around PR-AUC 0.229, 
 
 New scripts:
 
+These experiment scripts are now stored under the root-level `experiments/` folder.
+
 ```text
 plateau_diagnostic_search.py
 plateau_ensemble_search.py
@@ -1952,7 +1980,7 @@ Practical feature findings:
 - Broad ensembling did not break the plateau.
 - Random row splits produce higher apparent PR-AUC than patient-safe splits, confirming that evaluation design strongly affects reported results.
 
-Additional accepted-for-exploration feature family:
+Additional accepted final feature family:
 
 For the all-encounter framing only, create prior patient-history features using only earlier encounters for the same patient ordered by `encounter_id`. These include:
 
@@ -1970,7 +1998,7 @@ previous encounter readmission/admission/discharge/diagnosis/lab/medication cate
 
 Important limitation:
 
-These prior-history features are not part of the original first-encounter modeling scope. They are valid only if the project is framed as predicting risk for all eligible encounters, where earlier encounters for the same patient are historical information available before the current prediction.
+These prior-history features are not part of the original first-encounter modeling scope. They are accepted for the final model because the project is now framed as predicting risk for all eligible encounters, where earlier encounters for the same patient are historical information available before the current prediction.
 
 Best observed patient-safe result after this loop:
 
@@ -2014,3 +2042,60 @@ The final gain from 0.2389 to 0.2414/0.2415 came from focused CatBoost ratio/row
 Final interpretation:
 
 The plateau appears mainly due to dataset limitations and target noise rather than lack of model complexity. The public UCI data contain useful administrative, diagnosis, utilization, and limited longitudinal signal, but they do not include richer clinical information such as vitals, continuous labs, medication doses, discharge plans, notes, social determinants, exact dates, or hospital/provider identifiers. With patient-safe evaluation, the practical ceiling appears to be around PR-AUC 0.24 to 0.242 for this feature set.
+
+## Implementation Update: Final Single-File Pipeline Cleanup
+
+Status: implemented
+
+Final code file:
+
+```text
+FINAL_MODEL_PIPELINE.py
+```
+
+What was built:
+
+- A self-contained final pipeline that no longer imports experiment scripts.
+- Minimal pinned final dependencies in `requirements.txt`: pandas, numpy, scikit-learn, and CatBoost.
+- Optional broader experiment dependencies in `requirements-experiments.txt`.
+- Repo-root-based output path: `final_model_outputs/` is resolved from the repository location, not from the shell's current directory.
+- Dynamic model naming based on CLI arguments such as depth, learning rate, negative ratio, and seed.
+- Interactive prediction wording changed from calibrated probability language to risk-score/ranking language.
+
+Final preprocessing and feature setup:
+
+- Load `archive/diabetic_data.csv` with `?` treated as missing while preserving lab-result `None` strings.
+- Remove hospice/expired discharge outcomes.
+- Use all eligible encounters with a patient-safe train/validation/test split.
+- Create `readmitted_30`.
+- Drop ID/target columns from features.
+- Preserve categorical missingness as `Missing`.
+- Map rare or unseen categorical values to `Other` using training data only.
+- Use paper-style diagnosis groups plus additional diagnosis chapter/prefix/comorbidity features.
+- Keep raw administrative admission/discharge/source IDs as categorical features.
+- Use paper age groups and engineered age/utilization interactions.
+- Keep gender in the final CatBoost feature set.
+- Use `weight_recorded` and drop raw `weight`.
+- Summarize diabetes medications and medication classes instead of keeping every sparse raw medication column.
+- Add prior patient-history features that use only earlier encounters for the same patient.
+
+Final model and evaluation:
+
+- CatBoost classifier with native categorical handling.
+- Training uses all positive training rows and a fixed sampled ratio of negative rows.
+- The operating threshold is selected on validation using best F1.
+- Test evaluation reports PR-AUC, ROC-AUC, recall, precision, F1, accuracy, and confusion matrix counts.
+- The output also includes a diagnostic test-best-F1 threshold row. That row is useful for interpretation, but it should be labeled diagnostic because it chooses the threshold on the test split.
+- Lift tables report top-risk precision/recall at 1%, 5%, 10%, and 20% of test encounters.
+
+Final reproducible command:
+
+```bash
+python FINAL_MODEL_PIPELINE.py
+```
+
+Interactive course-project demo:
+
+```bash
+python FINAL_MODEL_PIPELINE.py --interactive-predict
+```

@@ -57,7 +57,7 @@ except Exception:  # pragma: no cover
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
-PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = PROJECT_ROOT / "archive" / "diabetic_data.csv"
 RESULTS_DIR = PROJECT_ROOT / "experiment_results"
 RESULTS_DIR.mkdir(exist_ok=True)

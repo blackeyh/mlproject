@@ -12,21 +12,23 @@ This folder contains the small set of materials needed to write the final AI1215
 6. Use `source_notes/assignment_requirements_summary.md` to check that the report matches the project description.
 7. Use `code/` if the report writer needs the exact notebooks/scripts.
 
-For reproduction, the current final model should be run from the project root with `python FINAL_MODEL_PIPELINE.py`. The older `all_encounters_group_split_search.py` script is part of the experiment history, but it is not the final headline model.
+For reproduction, the current final model should be run from the project root with `python FINAL_MODEL_PIPELINE.py`. The older `experiments/all_encounters_group_split_search.py` script is part of the experiment history, but it is not the final headline model.
 
 ## Best Numbers To Report
 
 Clean validation-selected final model:
 
 ```text
-Model: NegRefineCat_d6_lr002_neg7.5_seed37
+Model family: CatBoost with all eligible encounters, patient-safe split, and prior-history features
 PR-AUC: 0.2414
 ROC-AUC: 0.6827
-Recall: 0.4226
-Precision: 0.2223
-F1: 0.2913
-Accuracy: 0.7733
+Validation-selected threshold recall: 0.3621
+Validation-selected threshold precision: 0.2416
+Validation-selected threshold F1: 0.2898
+Validation-selected threshold accuracy: 0.8044
 ```
+
+The older recall `0.4226` / F1 `0.2913` row is a diagnostic test-best-F1 threshold row, not the validation-selected operating threshold.
 
 Best observed exploratory variant:
 
@@ -55,9 +57,9 @@ The validation-selected CatBoost model achieved PR-AUC 0.2414 on a patient-safe 
 
 ## Code
 
-- `../FINAL_MODEL_PIPELINE.py`: canonical one-file final model pipeline. It loads `archive/diabetic_data.csv`, applies final preprocessing/feature engineering, trains the final CatBoost model, and writes metrics/lift outputs.
-- `../requirements.txt`: flexible dependency list.
-- `../requirements-pinned.txt`: exact local package snapshot used for the final experiments.
+- `../FINAL_MODEL_PIPELINE.py`: canonical self-contained final model pipeline. It loads `archive/diabetic_data.csv`, applies final preprocessing/feature engineering, trains the final CatBoost model, and writes metrics/lift outputs.
+- `../requirements.txt`: pinned minimal dependency list for the final model.
+- `../requirements-experiments.txt`: optional heavier dependency list for rerunning experiment history.
 - `code/hospital_readmission_eda.ipynb`: EDA notebook.
 - `code/hospital_readmission_modeling.ipynb`: modeling notebook.
 - `code/history_negative_ratio_refinement.py`: experiment-history script that produced the negative-ratio refinement tables.

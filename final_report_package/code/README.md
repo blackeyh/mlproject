@@ -13,7 +13,7 @@ This folder contains the main notebooks and scripts needed to support the final 
 ## Final Result Scripts
 
 - `../../FINAL_MODEL_PIPELINE.py`
-  Canonical one-file final model pipeline. This is the clearest file for the professor:
+  Canonical self-contained final model pipeline. This is the clearest file for the professor:
   it loads the raw data, applies final preprocessing/feature engineering, trains the
   validation-selected CatBoost model, and writes final metrics/lift outputs.
 
@@ -28,7 +28,7 @@ This folder contains the main notebooks and scripts needed to support the final 
 
 ## Supporting Scripts
 
-These are imported by the final scripts:
+These are imported by the copied experiment-history scripts, not by the final root pipeline:
 
 - `modeling_experiments.py`
 - `feature_engineering_search.py`
@@ -57,10 +57,10 @@ From the project root, install requirements and run the canonical root script:
 /opt/anaconda3/bin/python FINAL_MODEL_PIPELINE.py
 ```
 
-For an exact package-version snapshot of the local environment used for the final experiments:
+For the optional broader experiment environment:
 
 ```bash
-/opt/anaconda3/bin/python -m pip install -r requirements-pinned.txt
+/opt/anaconda3/bin/python -m pip install -r requirements-experiments.txt
 ```
 
 For a fast wiring check without training:
@@ -75,6 +75,6 @@ The scripts expect the raw dataset at:
 archive/diabetic_data.csv
 ```
 
-The code in this folder is copied for report convenience. The canonical runnable copies are still in the project root.
+The code in this folder is copied for report convenience. The canonical final pipeline is still in the project root, and runnable experiment scripts are stored under the root-level `experiments/` folder.
 
 If someone wants to run the copied scripts from inside `final_report_package/code/`, copy or symlink the project `archive/` folder beside them first, because the scripts expect `archive/diabetic_data.csv` relative to their working project directory.
